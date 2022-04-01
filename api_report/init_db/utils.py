@@ -35,16 +35,6 @@ def get_pure_notices(notices: list) -> str:
     return pure_result
 
 
-# for Tests
-# print(get_pure_notices(['ЗАМЕЧАНИЕ:  Database mydb already exists\n',
-#                         'ЗАМЕЧАНИЕ:  Database mydb already exists\n',
-#                         'ЗАМЕЧАНИЕ:  Database mydb already exists\n']))
-#
-# print(get_pure_notices([]))
-#
-# print(get_pure_notices(['ЗАМЕЧАНИЕ:  Database mydb already exists\n']))
-
-
 def print_notices(notices: list):
     pure_notices = get_pure_notices(notices)
     if len(notices) > 0:
@@ -57,11 +47,6 @@ def print_sql_error(error: Exception):
     print('===SQL error===\n',
           f'\n{error}\n',
           '\n===End SQL error===')
-
-
-# print_notices(['ЗАМЕЧАНИЕ:  Database mydb already exists\n',
-#                'ЗАМЕЧАНИЕ:  Database mydb already exists\n',
-#                'ЗАМЕЧАНИЕ:  Database mydb already exists\n'])
 
 
 def try_except_decorator(error):
