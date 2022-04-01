@@ -59,7 +59,6 @@ class DatabaseRole:
         with self.connection.cursor() as cursor:
             cursor.execute(RoleSQLOperation.check_role_existence(self.role_name))
             exists, = cursor.fetchone()
-            print(exists)
             if exists:
                 cursor.execute(RoleSQLOperation.drop_role(self.role_name))
                 print(f"Role '{self.role_name}' has been successfully dropped.")
@@ -130,34 +129,8 @@ class DatabasePrivilege:
             cursor.execute(PrivilegeSQLOperation.grant_all_privileges(self.db_name, self.role_name))
 
     @try_except_decorator(Error)
-    def remove_all_privilege(self):
+    def remove_all_privileges(self):
         with self.connection.cursor() as cursor:
             cursor.execute(PrivilegeSQLOperation.remove_all_privileges(self.db_name, self.role_name))
 
-
-if __name__ == '__main__':
-    # first connection via superuser
-    with PsqlDatabaseConnection(user="postgres",
-                                password="12345",
-                                host="127.0.0.1",
-                                port="5432",
-                                isolation_level=ISOLATION_LEVEL_AUTOCOMMIT) as db:
-        # Create new database:
-        new_db = Database('university', db.connection)
-        new_db.create_postgresql_db()
-
-        # Create new role:
-        admins_role = DatabaseRole('admins', db.connection)
-        admins_role.create_new_role()
-
-        # Privilege setting:
-        admins_role_privileges = DatabasePrivilege(new_db.db_name, admins_role.role_name, db.connection)
-        admins_role_privileges.grant_all_privileges()
-
-        # Create new user:
-        admin_user = DatabaseUser('admin', "1111", db.connection)
-        admin_user.create_new_user()
-
-        # Join user to role:
-        admins_role.join_user_to_role(admin_user.username)
 
