@@ -1,11 +1,9 @@
 from psycopg2 import Error
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2.extensions import connection as psycopg2_conn
 from api_report.sql_queries.pure_sql_queries import DatabaseSQLOperation
 from api_report.sql_queries.pure_sql_queries import UserSQLOperation
 from api_report.sql_queries.pure_sql_queries import RoleSQLOperation
 from api_report.sql_queries.pure_sql_queries import PrivilegeSQLOperation
-from utils import PsqlDatabaseConnection
 from utils import try_except_decorator
 from dataclasses import dataclass
 
@@ -127,10 +125,12 @@ class DatabasePrivilege:
     def grant_all_privileges(self):
         with self.connection.cursor() as cursor:
             cursor.execute(PrivilegeSQLOperation.grant_all_privileges(self.db_name, self.role_name))
+        print(f"All privileges have been granted to role {self.role_name}")
 
     @try_except_decorator(Error)
     def remove_all_privileges(self):
         with self.connection.cursor() as cursor:
             cursor.execute(PrivilegeSQLOperation.remove_all_privileges(self.db_name, self.role_name))
+        print(f"All privileges have been removed from role {self.role_name}")
 
 
