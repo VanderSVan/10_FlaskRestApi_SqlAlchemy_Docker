@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PsqlDatabaseConnection:
+    dbname: str
     user: str
     password: str
     host: str
@@ -11,7 +12,8 @@ class PsqlDatabaseConnection:
     isolation_level: int
 
     def __enter__(self):
-        self.connection = connect(user=self.user,
+        self.connection = connect(dbname=self.dbname,
+                                  user=self.user,
                                   password=self.password,
                                   host=self.host,
                                   port=self.port)
@@ -24,7 +26,7 @@ class PsqlDatabaseConnection:
         print("PostgreSQL connection close.")
 
 
-def get_pure_notices(notices: list) -> str:
+def _get_pure_notices(notices: list) -> str:
     if len(notices) > 1:
         pure_notices_list = [notice.split(sep=':')[1].lstrip().rstrip() for notice in notices]
         pure_result = "\n".join(pure_notices_list)
@@ -36,7 +38,7 @@ def get_pure_notices(notices: list) -> str:
 
 
 def print_notices(notices: list):
-    pure_notices = get_pure_notices(notices)
+    pure_notices = _get_pure_notices(notices)
     if len(notices) > 0:
         print('===SQL notices==\n',
               f'\n{pure_notices}\n',
