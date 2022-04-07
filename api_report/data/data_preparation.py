@@ -3,15 +3,6 @@ from random import choices, sample, choice, randint
 from api_report.models.models import StudentModel, GroupModel, CourseModel
 
 
-def _generate_group_name(letters: str, separator: str) -> str:
-    """Creates random string like type: AA-11"""
-    result_list = choices(letters, k=2)
-    two_digit_number = randint(10, 100)
-    result_list.append(separator)
-    result_list.append(str(two_digit_number))
-    return "".join(result_list)
-
-
 def generate_available_places_in_groups(lower_limit_of_students: int,
                                         upper_limit_of_students: int,
                                         number_of_groups: int) -> dict:
@@ -25,19 +16,13 @@ def generate_available_places_in_groups(lower_limit_of_students: int,
             for group_id in range(1, number_of_groups + 1)}
 
 
-def _assign_student_to_group(groups: dict) -> int or None:
-    """
-    If there is a place in the group, assigns a student there.
-    While the number of available places will decrease by 1.
-    If there are no available places, returns None.
-    """
-    if sum(groups.values()) == 0:
-        return None
-    for group_id, available_places in groups.items():
-        if available_places == 0:
-            continue
-        groups[group_id] -= 1
-        return group_id
+def _generate_group_name(letters: str, separator: str) -> str:
+    """Creates random string like type: AA-11"""
+    result_list = choices(letters, k=2)
+    two_digit_number = randint(10, 100)
+    result_list.append(separator)
+    result_list.append(str(two_digit_number))
+    return "".join(result_list)
 
 
 def generate_group_instances(number_of_instance: int) -> list:
@@ -59,6 +44,21 @@ def generate_course_instances(courses: dict) -> list:
                         name=course[0],
                         description=course[1])
             for course_id, course in enumerate(courses.items(), start=1)]
+
+
+def _assign_student_to_group(groups: dict) -> int or None:
+    """
+    If there is a place in the group, assigns a student there.
+    While the number of available places will decrease by 1.
+    If there are no available places, returns None.
+    """
+    if sum(groups.values()) == 0:
+        return None
+    for group_id, available_places in groups.items():
+        if available_places == 0:
+            continue
+        groups[group_id] -= 1
+        return group_id
 
 
 def generate_student_instances(number_of_students: int,
