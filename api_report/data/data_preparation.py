@@ -11,6 +11,7 @@ def generate_available_places_in_groups(lower_limit_of_students: int,
     :param lower_limit_of_students: Lower boundary of students in a group.
     :param upper_limit_of_students: Upper boundary of students in a group.
     :param number_of_groups: How many students per group.
+    :return:{group_id: int, group_id: int, ...}
     """
     return {group_id: randint(lower_limit_of_students, upper_limit_of_students)
             for group_id in range(1, number_of_groups + 1)}
