@@ -1,6 +1,8 @@
 from string import ascii_uppercase
 from random import choices, sample, choice, randint
-from api_report.models.models import StudentModel, GroupModel, CourseModel
+from api_report.models.student import StudentModel
+from api_report.models.group import GroupModel
+from api_report.models.course import CourseModel
 
 
 def generate_available_places_in_groups(lower_limit_of_students: int,
