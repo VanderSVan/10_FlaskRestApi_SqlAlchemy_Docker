@@ -1,0 +1,22 @@
+Get student list
+---
+tags:
+  - Students
+parameters:
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: yes or no
+  - name: group
+    in: query
+    required: false
+    type: string
+    description: group name
+responses:
+  200:
+    description: Get student list with info
+    schema:
+      $ref: '#/definitions/students'
+produces:
+  - application/json

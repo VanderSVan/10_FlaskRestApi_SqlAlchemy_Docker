@@ -1,0 +1,11 @@
+Get course list
+---
+tags:
+  - Courses
+responses:
+  200:
+    description: Get course list with info
+    schema:
+      $ref: '#/definitions/courses'
+produces:
+  - application/json

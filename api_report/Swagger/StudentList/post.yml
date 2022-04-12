@@ -1,0 +1,20 @@
+Add student
+---
+tags:
+  - Student
+parameters:
+  - name: first_name
+    in: query
+    required: true
+    type: string
+  - name: last_name
+    in: query
+    required: false
+    type: string
+responses:
+  200:
+    description: Add students to db
+#    schema:
+#      $ref: '#/definitions/student'
+content:
+  - application/json
