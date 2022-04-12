@@ -16,5 +16,9 @@ class GroupModel(db.Model):
 
     # @classmethod
     # def get_groups_filter_by_student_count(cls, student_count: int):
-    #     print(cls.query.filter(student_count == cls.students.count()))
-    #     return cls.query.filter(student_count == cls.query.filter(cls.students).count())
+    #     query = cls.query.with_entities(cls.group_id, cls.name).\
+    #         outerjoin(StudentModel).\
+    #         group_by(cls.group_id).\
+    #         having(func.count(StudentModel.student_id) <= student_count)
+    #     print(query)
+    #     return query

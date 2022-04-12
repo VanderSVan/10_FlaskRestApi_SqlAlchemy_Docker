@@ -1,6 +1,5 @@
 from api_report.db.db_sqlalchemy import db
 from .relationships import students_courses
-from .group import GroupModel
 from sqlalchemy import asc
 
 
@@ -12,7 +11,7 @@ class StudentModel(db.Model):
     last_name = db.Column(db.String(100), nullable=False)
 
     group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
-    group = db.relationship(GroupModel)
+    group = db.relationship('GroupModel')
 
     courses = db.relationship('CourseModel', secondary=students_courses,
                               backref=db.backref('all_students'),
@@ -30,3 +29,10 @@ class StudentModel(db.Model):
     def get_full_info(cls):
         return cls.query.all()
 
+    def save_to_db(self) -> None:
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self) -> None:
+        db.session.delete(self)
+        db.session.commit()

@@ -9,5 +9,7 @@ course_schema = CourseSchema(many=True)
 class Courses(Resource):
     @classmethod
     def get(cls):
+        """file: api_report/Swagger/Courses/get.yml"""
         courses = CourseModel.get_all_courses()
         return course_schema.dump(courses), 200
+
