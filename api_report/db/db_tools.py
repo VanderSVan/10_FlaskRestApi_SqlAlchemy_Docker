@@ -1,11 +1,12 @@
 from psycopg2 import Error
 from psycopg2.extensions import connection as psycopg2_conn
-from api_report.sql_queries.pure_sql_queries import DatabaseSQLOperation
-from api_report.sql_queries.pure_sql_queries import UserSQLOperation
-from api_report.sql_queries.pure_sql_queries import RoleSQLOperation
-from api_report.sql_queries.pure_sql_queries import PrivilegeSQLOperation
-from utils import try_except_decorator
 from dataclasses import dataclass
+
+from api_report.db.pure_sql_queries import (DatabaseSQLOperation,
+                                            RoleSQLOperation,
+                                            UserSQLOperation,
+                                            PrivilegeSQLOperation)
+from api_report.db.utils import try_except_decorator
 
 
 @dataclass

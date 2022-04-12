@@ -1,10 +1,10 @@
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2 import DatabaseError
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from utils import PsqlDatabaseConnection
-from db_tools import Database
-from db_tools import DatabaseRole
-from db_tools import DatabasePrivilege
-from db_tools import DatabaseUser
+from db_tools import (Database,
+                      DatabaseRole,
+                      DatabaseUser,
+                      DatabasePrivilege)
 
 
 if __name__ == '__main__':
