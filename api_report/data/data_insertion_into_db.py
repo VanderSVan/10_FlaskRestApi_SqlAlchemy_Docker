@@ -1,6 +1,6 @@
 # !!! Inserting data into an empty database only !!!
 
-from .db_sqlalchemy import db as initialized_db
+from api_report.db.db_sqlalchemy import db as initialized_db
 from api_report.models.student import StudentModel
 from api_report.models.group import GroupModel
 from api_report.models.course import CourseModel
