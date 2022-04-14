@@ -9,6 +9,7 @@ from api_report.resources.utils import StudentListResponse
 
 short_student_schema = ShortStudentSchema()
 short_students_schema = ShortStudentSchema(many=True)
+
 full_student_schema = FullStudentSchema()
 full_students_schema = FullStudentSchema(many=True)
 
@@ -19,7 +20,7 @@ class Student(Resource):
         """file: api_report/Swagger/Student/delete.yml"""
         student = StudentModel.find_by_id(student_id)
         if not student:
-            return make_response(jsonify({'status': 404, 'message': f"student '{student_id}' not found"}), 404)
+            return {'status': 404, 'message': f"student '{student_id}' not found"}, 404
         if request.args.get('full') == 'yes':
             return full_student_schema.dump(student), 200
 
@@ -30,10 +31,9 @@ class Student(Resource):
         """file: api_report/Swagger/StudentList/post.yml"""
         student = StudentModel.find_by_id(student_id)
         if not student:
-            return make_response(jsonify({'status': 404, 'message': f"student '{student_id}' not found"}), 404)
+            return {'status': 404, 'message': f"student '{student_id}' not found"}, 404
         student.delete_from_db()
-        return make_response(jsonify({'status': 200, 'message': f"student '{student_id}' was successfully deleted"}),
-                             200)
+        return {'status': 200, 'message': f"student '{student_id}' was successfully deleted"}, 200
 
 
 class StudentList(Resource):
@@ -63,7 +63,8 @@ class StudentList(Resource):
             added_students.append(student.student_id)
             max_student_id += 1
             student.save_to_db()
-        return StudentListResponse.create_response_for_post_method(added_students)
+        return {'status': 201,
+                'message': f"students '{added_students}' were successfully added"}, 201
 
     @classmethod
     def delete(cls):
