@@ -1,6 +1,6 @@
 from api_report.db.db_sqlalchemy import db
 from .relationships import students_courses
-from sqlalchemy import asc
+from sqlalchemy import func, asc
 
 
 class StudentModel(db.Model):
@@ -26,8 +26,12 @@ class StudentModel(db.Model):
         return cls.query.count()
 
     @classmethod
+    def get_max_student_id(cls) -> "StudentModel":
+        return cls.query.with_entities(func.max(cls.student_id)).first()
+
+    @classmethod
     def get_all_students(cls) -> "StudentModel":
-        return cls.query.order_by(asc(cls.student_id))
+        return cls.query.order_by(asc(cls.student_id)).all()
 
     @classmethod
     def get_full_info(cls) -> "StudentModel":
