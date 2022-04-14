@@ -1,0 +1,16 @@
+Delete student list from db
+---
+tags:
+  - Students
+parameters:
+  - name: student_ids
+    in: query
+    required: true
+    type: string
+responses:
+  200:
+    description: Delete students from db
+    schema:
+      $ref: '#/definitions/student'
+produces:
+  - application/json
