@@ -3,11 +3,6 @@ from flask import jsonify
 
 class StudentListResponse:
     @staticmethod
-    def create_response_for_post_method(added_students: list):
-        return {'status': 201,
-                'message': f"students '{added_students}' were successfully added"}, 201
-
-    @staticmethod
     def create_response_for_delete_method(deleted_students: list, nonexistent_students: list):
         if len(deleted_students) == 0:
             tuple_output = ({'status': 404,
