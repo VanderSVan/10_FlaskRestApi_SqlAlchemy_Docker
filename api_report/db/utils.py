@@ -59,7 +59,7 @@ def try_except_decorator(error):
             except error as err:
                 print_sql_error(err)
             except Exception as default_err:
-                print(f"Get Exception {default_err}")
+                print(f"Got an exception: {default_err}")
             finally:
                 print_notices(self.connection.notices)
 
