@@ -2,19 +2,61 @@ Add student
 ---
 tags:
   - Student
+summary: "Add a new student into db"
+description: ""
+consumes:
+- "application/json"
+produces:
+- "application/json"
 parameters:
-  - name: first_name
-    in: query
-    required: true
-    type: string
-  - name: last_name
-    in: query
-    required: false
-    type: string
+  - name: Student info
+    in: body
+    schema:
+      $ref: "#definitions/post_student3"
+    responses:
+      200:
+        description: Add students to db
 responses:
   200:
-    description: Add students to db
+    description: Get student info by student_id
+    schema:
+      $ref: '#/definitions/post_student3'
+
+
+
+
+
+
+
+#  - name: first_name
+#    in: body
+#  - name: last_name
+#    in: body
+#  - name: group_id
+#    in: body
+##    schema:
+##      type: object
+##      required:
+##        - first_name
+##        - last_name
+##        - group_id
+##      properties:
+##        first_name:
+##          type: string
+##          maxLenght: 100
+##        last_name:
+##          type: string
+##          maxLenght: 100
+##        group_id:
+##          type: integer
+#responses:
+#  200:
+#    description: Add students to db
+##    content:
+##      application/json
 #    schema:
-#      $ref: '#/definitions/student'
-content:
-  - application/json
+#      $ref: '#/definitions/post_student'
+##Content-Type:
+##  - application/json
+#produces:
+#  - application/json
