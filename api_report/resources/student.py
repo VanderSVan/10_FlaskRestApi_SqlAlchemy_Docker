@@ -1,3 +1,5 @@
+import json
+
 from flask import request, make_response, jsonify
 from flask_restful import Resource
 from api_report.models.student import StudentModel
@@ -36,12 +38,14 @@ class StudentList(Resource):
 
         return short_students_schema.dump(student_list), 200
 
-    # @classmethod
-    # def post(cls):
-    #     """file: api_report/Swagger/StudentList/post.yml"""
-    #     student_json = request.get_json()
-    #     student = short_student_schema.load(student_json)
-    #
-    #     student.save_to_db()
-    #
-    #     return make_response(jsonify({'status': 200, 'message': 'user_registered'}), 200)
+    @classmethod
+    def post(cls):
+        """file: api_report/Swagger/StudentList/post.yml"""
+        student_count = StudentModel.get_number_of_students()
+        student_list_json = request.get_json()  # student list
+        student_objs = full_students_schema.load(student_list_json)
+        for student in student_objs:
+            student.student_id = student_count + 1
+            student_count += 1
+            student.save_to_db()
+        return make_response(jsonify({'status': 200, 'message': 'students were successfully added'}), 200)
