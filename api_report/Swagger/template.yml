@@ -23,40 +23,13 @@ definitions:
         type: string
       course_names:
         type: string
-  post_student:
-    type: object
-    properties:
-      student_id:
-        type: integer
-      first_name:
-        type: string
-      last_name:
-        type: string
-      group_id:
-        type: integer
     example:
       student_id: 1
-      first_name: Alex
-      last_name: Brown
-      group_id: 1
-  post_student2:
-    type: object
-    properties:
-      student_num:
-        type: object
-        properties:
-          first_name:
-            type: string
-          last_name:
-            type: string
-          group_id:
-            type: string
-#    example:
-#      student_num: 1
-#      first_name: Alex
-#      last_name: Brown
-#      group_id: 1
-  post_student3:
+      first_name: John
+      last_name: Marlin
+      group_name: NV-78
+      course_names: Physics, Electrical engineering
+  post_student:
     type: array
     items:
       properties:
@@ -66,6 +39,13 @@ definitions:
           type: string
         group_id:
           type: integer
+    example:
+      - first_name: John
+        last_name: Marlin
+        group_id: 1
+      - first_name: Alex
+        last_name: Brown
+        group_id: 1
   students:
     type: array
     items:
