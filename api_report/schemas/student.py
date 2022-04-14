@@ -1,3 +1,4 @@
+from marshmallow import post_load
 from api_report.ma import ma
 from api_report.models.student import StudentModel
 from .course import CourseSchema
@@ -19,10 +20,14 @@ class ShortStudentSchema(ma.SQLAlchemySchema):
 class FullStudentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = StudentModel
-        fields = ('student_id', 'first_name', 'last_name', 'group', 'courses')
         include_fk = True
         include_relationships = True
+        dump_only = ("student_id",)
         ordered = True
+
+    @post_load
+    def make_student_obj(self, data, **kwargs):
+        return StudentModel(**data)
 
     # field which contain list of courses
     courses = ma.Nested(CourseSchema(only=('course_id', 'name', 'description')), many=True)
