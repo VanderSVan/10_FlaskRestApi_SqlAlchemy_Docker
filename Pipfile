@@ -13,6 +13,7 @@ sqlalchemy-utils = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flasgger = "*"
+marshmallow = "*"
 
 [dev-packages]
 
