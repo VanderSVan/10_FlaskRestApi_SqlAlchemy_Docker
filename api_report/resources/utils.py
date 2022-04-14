@@ -3,7 +3,7 @@ from flask import jsonify
 
 class StudentListResponse:
     @staticmethod
-    def create_response_for_get_method(added_students: list):
+    def create_response_for_post_method(added_students: list):
         return {'status': 201,
                 'message': f"students '{added_students}' were successfully added"}, 201
 
