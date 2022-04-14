@@ -18,8 +18,8 @@ class StudentModel(db.Model):
                               lazy='subquery')
 
     @classmethod
-    def find_by_id(cls, _id: int) -> "StudentModel":
-        return cls.query.filter_by(student_id=_id).first()
+    def find_by_id(cls, id_: int) -> "StudentModel":
+        return cls.query.filter_by(student_id=id_).first()
 
     @classmethod
     def get_number_of_students(cls) -> "StudentModel":
