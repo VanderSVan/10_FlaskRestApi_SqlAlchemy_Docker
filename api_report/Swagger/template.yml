@@ -29,7 +29,48 @@ definitions:
       last_name: Marlin
       group_name: NV-78
       course_names: Physics, Electrical engineering
-  post_student:
+  put_student:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      group_id:
+        type: integer
+      courses:
+        type: array
+        items:
+          properties:
+            course_id:
+              type: integer
+    example:
+      first_name: John
+      last_name: Marlin
+      group_id: 1
+      courses: [ 1, 2, 3 ]
+#    type: object
+#    properties:
+#      student_id:
+#        type: integer
+#      first_name:
+#        type: string
+#      last_name:
+#        type: string
+#      group_id:
+#        type: integer
+#      courses:
+#        type: array
+#        items:
+#          type: integer
+#        collectionFormat: multi
+#    example:
+#      - student_id: 1
+#        first_name: John
+#        last_name: Marlin
+#        group_id: 1
+#        courses: [ 1, 2, 3 ]
+  post_students:
     type: array
     items:
       properties:
@@ -39,13 +80,48 @@ definitions:
           type: string
         group_id:
           type: integer
+        courses:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
     example:
       - first_name: John
         last_name: Marlin
-        group_id: 1
       - first_name: Alex
         last_name: Brown
+        group_id: 3
+        courses: [ 4, 5 ]
+  put_students:
+    type: array
+    items:
+      properties:
+        student_id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        group_id:
+          type: integer
+        courses:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+    example:
+      - student_id: 1
+        first_name: John
+        last_name: Marlin
         group_id: 1
+        courses: [1, 2, 3]
+      - student_id: 2
+        first_name: Alex
+        last_name: Brown
+        group_id: 1
+        courses: [4, 5]
   students:
     type: array
     items:

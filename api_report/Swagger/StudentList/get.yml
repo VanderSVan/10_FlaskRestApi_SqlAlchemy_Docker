@@ -1,18 +1,23 @@
 Get student list
 ---
 tags:
-  - Students
+  - Student list
 parameters:
   - name: full
     in: query
     required: false
     type: string
-    description: yes or no
+    description: true or false
   - name: group
     in: query
     required: false
-    type: string
-    description: group name
+    type: integer
+    description: group id
+  - name: course
+    in: query
+    required: false
+    type: integer
+    description: course id
 responses:
   200:
     description: Get student list with info

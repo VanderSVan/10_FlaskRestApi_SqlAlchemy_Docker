@@ -1,11 +1,13 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from flasgger import Swagger
+from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 from api_report.data.data_insertion_into_db import insert_data_to_db
 from api_report.resources.student import Student, StudentList
-from api_report.resources.course import Courses
-from api_report.resources.group import Groups
+from api_report.resources.course import Course, CourseList
+from api_report.resources.group import Group, GroupList
 
 
 def create_app(test_config=False):
@@ -31,7 +33,23 @@ def create_app(test_config=False):
         insert_data_to_db(db)
 
         db.session.commit()
-        print('Tables has been created')
+        # print('Tables has been created')
+
+    @application.errorhandler(ValidationError)
+    def handle_marshmallow_validation(err):
+        print('Got ValidationError =', err)
+        return jsonify(err.messages), 400
+
+    @application.errorhandler(IntegrityError)
+    def handle_sqlalchemy_errors(err):
+        print('Got IntegrityError =', err)
+        return jsonify(err.orig.diag.message_detail), 400
+
+    @application.errorhandler(AttributeError)
+    def handle_attribute_errors(err):
+        print('Got AttributeError =', err)
+        return jsonify(err.args), 400
+
     if test_config:
         application.config['TESTING'] = True
 
@@ -41,11 +59,12 @@ def create_app(test_config=False):
     api.add_resource(Student, "/students/<int:student_id>")
 
     # Courses
-    api.add_resource(Courses, "/courses")
+    api.add_resource(CourseList, "/courses")
+    api.add_resource(Course, "/courses/<int:course_id>")
 
     # Groups
-    api.add_resource(Groups, "/groups")
-
+    api.add_resource(GroupList, "/groups")
+    api.add_resource(Group, "/groups/<int:group_id>")
     return application
 
 

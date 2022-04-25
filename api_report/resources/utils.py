@@ -1,7 +1,35 @@
-from flask import jsonify
+from flask import abort
+from marshmallow import INCLUDE
 
 
 class StudentListResponse:
+    @classmethod
+    def save_to_db(cls, schema, json):
+        updated_students = schema.load(json, partial=True, unknown=INCLUDE)
+        for updated_student in updated_students:
+            updated_student.save_to_db()
+
+    @staticmethod
+    def create_response_for_put_method(updated_students: list,
+                                       nonexistent_students: list,
+                                       schema,
+                                       json):
+        if len(updated_students) == 0:
+            tuple_output = ({'status': 404,
+                             'message': f"students '{nonexistent_students}' not found "}, 404)
+        elif len(nonexistent_students) == 0 and len(updated_students) != 0:
+            StudentListResponse.save_to_db(schema, json)
+            tuple_output = (
+                {'status': 200,
+                 'message': f"students '{updated_students}' were successfully updated"}, 200)
+        else:
+            StudentListResponse.save_to_db(schema, json)
+            tuple_output = (
+                {'status': 200,
+                 'message': f"students '{updated_students}' were successfully updated and "
+                            f"students '{nonexistent_students}' not found"}, 200)
+        return tuple_output
+
     @staticmethod
     def create_response_for_delete_method(deleted_students: list, nonexistent_students: list):
         if len(deleted_students) == 0:
@@ -19,8 +47,14 @@ class StudentListResponse:
         return tuple_output
 
 
-json_value_error = {'status': 400,
-                    'message': f"student_ids must have only sequence of integers"}
+# def set_new_values_for_student(student, json, course_model):
+#     for key, new_value in json.items():
+#         getattr(student, key)
+#         if key == 'courses':
+#             correct_course_objs = course_model.get_courses_by_ids(json.get('courses'))
+#             setattr(student, key, correct_course_objs)
+#         else:
+#             setattr(student, key, new_value)
 
 
 def _get_json_default_error(err: Exception):
@@ -29,25 +63,25 @@ def _get_json_default_error(err: Exception):
             'type error': f'{type(err)}'}
 
 
-def handle_query_string(output_val_err):
-    def outer_wrapper(func):
-        def inner_wrapper(self, *args, **kwargs):
-            try:
-                return func(self, *args, **kwargs)
-            except ValueError as val_err:
-                print('Got ValueError =', val_err)
-                return jsonify(output_val_err)
-            except Exception as default_err:
-                print(f"Got an type Exception: {type(default_err)} "
-                      f"message: {default_err}")
-                return jsonify(_get_json_default_error(default_err))
+def handle_query_string(func):
+    def inner_wrapper(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except ValueError as val_err:
+            print('Got ValueError =', val_err)
+            abort(400, description=f'{val_err}')
+        except Exception as default_err:
+            print(f"Got an type Exception: {type(default_err)} "
+                  f"message: {default_err}")
+            abort(400, description=f"{default_err}")
 
-        return inner_wrapper
-
-    return outer_wrapper
+    return inner_wrapper
 
 
-@handle_query_string(json_value_error)
+@handle_query_string
 def _convert_string_to_int_list(str_: str, separator: str):
+    if not str_:
+        abort(400, description="Set student id list")
+
     str_list = str_.split(separator)
     return [int(string_.strip()) for string_ in str_list]

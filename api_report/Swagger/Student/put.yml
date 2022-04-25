@@ -1,0 +1,51 @@
+Update student info
+---
+tags:
+  - Student
+parameters:
+  - name: student_id
+    in: path
+    required: true
+    type: integer
+  - name: Student info
+    in: body
+    schema:
+      $ref: "#definitions/put_student"
+    responses:
+      200:
+        description: Update student
+#  - name: student_id
+#    in: path
+#    required: true
+#    type: integer
+#  - name: first_name
+#    in: query
+#    required: false
+#    type: string
+#    description: any first name
+#  - name: last_name
+#    in: query
+#    required: false
+#    type: string
+#    description: any last name
+#  - name: group_id
+#    in: query
+#    required: false
+#    type: integer
+#    description: choose from existing groups
+#  - name: courses
+#    in: query
+#    required: false
+#    schema:
+#      type: array
+#      items:
+#        type: integer
+#    explode: false
+#    description: choose from existing courses
+responses:
+  200:
+    description: Update student info
+#    schema:
+#      $ref: '#/definitions/put_student'
+produces:
+  - application/json

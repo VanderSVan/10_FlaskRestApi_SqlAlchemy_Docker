@@ -1,0 +1,50 @@
+Update course info
+---
+tags:
+  - Course
+parameters:
+  - name: course_id
+    in: path
+    required: true
+    type: integer
+  - name: Course info
+    in: body
+    schema:
+      $ref: "#definitions/put_course"
+    responses:
+      200:
+        description: Update course
+
+responses:
+  200:
+    description: Update course info
+    schema:
+      $ref: '#/definitions/put_course'
+produces:
+  - application/json
+
+definitions:
+  put_course:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        add_students:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+        delete_students:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+      example:
+        name: English
+        description: it's amazing
+        add_students: [1, 2, 3]
+        delete_students: [4, 5, 6]

@@ -1,38 +1,70 @@
+from dataclasses import dataclass
+from sqlalchemy import func, asc
+
 from api_report.db.db_sqlalchemy import db
 from .relationships import students_courses
-from sqlalchemy import func, asc
 
 
 class StudentModel(db.Model):
     __tablename__ = "students"
 
     student_id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(100), nullable=False)
-    last_name = db.Column(db.String(100), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
 
     group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
-    group = db.relationship('GroupModel')
+    # group = db.relationship('GroupModel',
+    #                         backref=db.backref('groups',
+    #                                            order_by='StudentModel.student_id.asc()'),
+    #                         overlaps="groups")
 
-    courses = db.relationship('CourseModel', secondary=students_courses,
-                              backref=db.backref('all_students'),
-                              lazy='subquery')
+    # courses = db.relationship('CourseModel',
+    #                           secondary=students_courses,
+    #                           back_populates="students",
+    #                           order_by='CourseModel.course_id.asc()')
 
-    @classmethod
-    def find_by_id(cls, id_: int) -> "StudentModel":
-        return cls.query.filter_by(student_id=id_).first()
+    # courses = db.relationship('CourseModel',
+    #                           secondary=students_courses,
+    #                           backref=db.backref('all_students',
+    #                                              order_by='StudentModel.student_id.asc()'),
+    #                           lazy='subquery',
+    #                           order_by='CourseModel.name.asc()')
 
-    @classmethod
-    def get_number_of_students(cls) -> "StudentModel":
-        return cls.query.count()
-
-    @classmethod
-    def get_max_student_id(cls) -> "StudentModel":
-        return cls.query.with_entities(func.max(cls.student_id)).first()
+    def __repr__(self):
+        return f"StudentModel {self.student_id}"
 
     @classmethod
     def get_all_students(cls) -> "StudentModel":
         return cls.query.order_by(asc(cls.student_id)).all()
+    
+    @classmethod
+    def get_number_of_students(cls) -> "StudentModel":
+        return cls.query.count()
+    
+    @classmethod
+    def get_max_student_id(cls) -> "StudentModel":
+        return cls.query.with_entities(func.max(cls.student_id)).first()
+   
+    @classmethod
+    def find_by_id(cls, student_id: int) -> "StudentModel":
+        return cls.query.filter_by(student_id=student_id).first()
 
+    @classmethod
+    def find_by_id_or_404(cls, student_id: int) -> "StudentModel":
+        return cls.query.get_or_404(student_id, description=f"student '{student_id}' not found")
+
+    @classmethod
+    def not_find_by_id_or_400(cls, student_id: int) -> None:
+        return cls.query.not_exists_or_400(student_id, description=f"student '{student_id}' already exists")
+
+    @classmethod
+    def get_students_by_ids(cls, student_ids: list) -> list["StudentModel"] or None:
+        if student_ids is None:
+            selected_students = None
+        else:
+            selected_students = [cls.find_by_id_or_404(student) for student in student_ids]
+        return selected_students
+    
     @classmethod
     def get_full_info(cls) -> "StudentModel":
         return cls.query.all()

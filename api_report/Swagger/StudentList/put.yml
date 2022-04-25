@@ -1,8 +1,8 @@
-Add student list
+Update students data
 ---
 tags:
   - Student list
-summary: "Add a new student into db"
+summary: "Updating the data of existing students"
 description: ""
 consumes:
 - "application/json"
@@ -12,7 +12,7 @@ parameters:
   - name: Student info
     in: body
     schema:
-      $ref: "#definitions/post_students"
+      $ref: "#definitions/put_students"
     responses:
       200:
         description: Add students to db
@@ -20,4 +20,4 @@ responses:
   200:
     description: Add student list
     schema:
-      $ref: '#/definitions/post_students'
+      $ref: '#/definitions/put_students'

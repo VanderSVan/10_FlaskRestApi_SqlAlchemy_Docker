@@ -1,0 +1,35 @@
+Get group info
+---
+tags:
+  - Group
+parameters:
+  - name: group_id
+    in: path
+    required: true
+    type: integer
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
+responses:
+  200:
+    description: Get group info by group_id
+    schema:
+      $ref: '#/definitions/group'
+produces:
+  - application/json
+definitions:
+  group:
+    type: object
+    properties:
+      group_id:
+        type: string
+      name:
+        type: string
+      students:
+        type: string
+    example:
+      group_id: 1
+      name: YT-25
+      students: [3,4,8]

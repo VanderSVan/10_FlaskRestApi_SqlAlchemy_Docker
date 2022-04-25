@@ -44,8 +44,8 @@ def generate_course_instances(courses: dict) -> list:
     where course name as key and description as value.
     """
     return [CourseModel(course_id=course_id,
-                        name=course[0],
-                        description=course[1])
+                        name=course[0].title(),
+                        description=course[1].title())
             for course_id, course in enumerate(courses.items(), start=1)]
 
 
@@ -72,8 +72,8 @@ def generate_student_instances(number_of_students: int,
     """ Generates random student instances with all relationships. """
     random_students_list = sample(range(1, number_of_students + 1), number_of_students)
     return [StudentModel(student_id=student_id,
-                         first_name=choice(first_names),
-                         last_name=choice(last_names),
+                         first_name=choice(first_names).title(),
+                         last_name=choice(last_names).title(),
                          group_id=_assign_student_to_group(groups),
                          courses=sample(courses, randint(1, 3)))
             for student_id in random_students_list]

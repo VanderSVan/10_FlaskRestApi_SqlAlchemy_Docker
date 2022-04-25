@@ -1,0 +1,33 @@
+Delete course from db
+---
+tags:
+  - Course
+parameters:
+  - name: course_id
+    in: path
+    required: true
+    type: integer
+responses:
+  200:
+    description: Delete course from db
+    schema:
+      $ref: '#/definitions/course'
+produces:
+  - application/json
+definitions:
+  course:
+    type: object
+    properties:
+      course_id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      students:
+        type: string
+    example:
+      course_id: 1
+      name: Mathematics
+      description: Mathematics is the science and study of quality, structure, space, and change.
+      students: [3,4,8]

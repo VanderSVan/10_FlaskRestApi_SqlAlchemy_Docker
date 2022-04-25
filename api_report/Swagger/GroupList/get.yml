@@ -1,8 +1,13 @@
 Get group list
 ---
 tags:
-  - Groups
+  - Group list
 parameters:
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
   - name: student_count
     in: query
     required: false
@@ -10,7 +15,7 @@ parameters:
     description: Finds all groups with less or equals student count
 responses:
   200:
-    description: Get group list with info
+    description: Get group list
     schema:
       $ref: '#/definitions/groups'
 produces:

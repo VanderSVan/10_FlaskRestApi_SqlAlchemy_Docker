@@ -1,37 +1,58 @@
-from flask import request, make_response, jsonify
-from flask.wrappers import Response
+from flask import request
 from flask_restful import Resource
+from marshmallow import INCLUDE
+
 from api_report.models.student import StudentModel
+from api_report.models.course import CourseModel
+from api_report.models.group import GroupModel
 from api_report.schemas.student import ShortStudentSchema, FullStudentSchema
-from api_report.sqlalchemy_queries.queries import ComplexQueries
-from api_report.resources.utils import _convert_string_to_int_list
-from api_report.resources.utils import StudentListResponse
+from api_report.sqlalchemy_queries.queries import ComplexQuery
+from api_report.resources.utils import (StudentListResponse,
+                                        _convert_string_to_int_list)
 
 short_student_schema = ShortStudentSchema()
-short_students_schema = ShortStudentSchema(many=True)
-
 full_student_schema = FullStudentSchema()
-full_students_schema = FullStudentSchema(many=True)
+
+short_student_list_schema = ShortStudentSchema(many=True)
+full_student_list_schema = FullStudentSchema(many=True)
 
 
 class Student(Resource):
     @classmethod
     def get(cls, student_id):
         """file: api_report/Swagger/Student/delete.yml"""
-        student = StudentModel.find_by_id(student_id)
-        if not student:
-            return {'status': 404, 'message': f"student '{student_id}' not found"}, 404
-        if request.args.get('full') == 'yes':
-            return full_student_schema.dump(student), 200
+        student = StudentModel.find_by_id_or_404(student_id)
+        if request.args.get('full', 'false').lower() == 'true':
+            response = full_student_schema.dump(student), 200
+        else:
+            response = short_student_schema.dump(student), 200
+        return response
 
-        return short_student_schema.dump(student), 200
+    @classmethod
+    def put(cls, student_id):
+        """file: api_report/Swagger/Student/put.yml"""
+        StudentModel.find_by_id_or_404(student_id)
+        student_json = request.get_json()
+        student_json['student_id'] = student_id
+        print(student_json)
+        updated_student = full_student_schema.load(student_json, partial=True, unknown=INCLUDE)
+        updated_student.save_to_db()
+        return {'status': 201, 'message': f"student '{student_id}' was successfully updated"}, 201
+
+    @classmethod
+    def post(cls, student_id):
+        """file: api_report/Swagger/Student/put.yml"""
+        StudentModel.not_find_by_id_or_400(student_id)
+        student_json = request.get_json()
+        student_json['student_id'] = student_id
+        new_student = full_student_schema.load(student_json, unknown=INCLUDE)
+        new_student.save_to_db()
+        return {'status': 201, 'message': f"student '{student_id}' was successfully created"}, 201
 
     @classmethod
     def delete(cls, student_id):
         """file: api_report/Swagger/StudentList/post.yml"""
-        student = StudentModel.find_by_id(student_id)
-        if not student:
-            return {'status': 404, 'message': f"student '{student_id}' not found"}, 404
+        student = StudentModel.find_by_id_or_404(student_id)
         student.delete_from_db()
         return {'status': 200, 'message': f"student '{student_id}' was successfully deleted"}, 200
 
@@ -40,40 +61,68 @@ class StudentList(Resource):
     @classmethod
     def get(cls):
         """file: api_report/Swagger/StudentList/get.yml"""
-        full_stat = request.args.get('full')
-        group_name = request.args.get('group')
-        if group_name:
-            student_list = ComplexQueries.get_students_from_group(group_name)
+        group_id = request.args.get('group')
+        course_id = request.args.get('course')
+
+        if group_id and course_id:
+            student_list = ComplexQuery.get_students_filter_by_group_and_course(int(group_id), int(course_id))
+        elif group_id:
+            group_obj = GroupModel.find_by_id_or_404(int(group_id))
+            student_list = group_obj.all_students
+        elif course_id:
+            course_obj = CourseModel.find_by_id_or_404(int(course_id))
+            student_list = course_obj.students
         else:
             student_list = StudentModel.get_all_students()
-        if full_stat == 'yes':
-            return full_students_schema.dump(student_list), 200
 
-        return short_students_schema.dump(student_list), 200
+        if request.args.get('full', 'false').lower() == 'true':
+            response = full_student_list_schema.dump(student_list), 200
+        else:
+            response = short_student_list_schema.dump(student_list), 200
+
+        return response
+
+    @classmethod
+    def put(cls):
+        """file: api_report/Swagger/StudentList/put.yml"""
+        student_list_json = request.get_json()
+        updated_students = []
+        nonexistent_students = []
+        for student_json in student_list_json:
+            student_id = student_json.get('student_id')
+            student = StudentModel.find_by_id(student_id)
+            if student:
+                updated_students.append(student_id)
+            else:
+                nonexistent_students.append(student_id)
+        return StudentListResponse.create_response_for_put_method(updated_students,
+                                                                  nonexistent_students,
+                                                                  full_student_list_schema,
+                                                                  student_list_json)
 
     @classmethod
     def post(cls):
         """file: api_report/Swagger/StudentList/post.yml"""
         max_student_id, = StudentModel.get_max_student_id()
-        student_list_json = request.get_json()  # student list
-        student_objs = full_students_schema.load(student_list_json)
-        added_students = []
-        for student in student_objs:
-            student.student_id = max_student_id + 1
-            added_students.append(student.student_id)
+        student_list_json = request.get_json()
+
+        for student_json in student_list_json:
             max_student_id += 1
+            student_json['student_id'] = max_student_id
+
+        new_students = full_student_list_schema.load(student_list_json, unknown=INCLUDE)
+        added_students_counter = []
+        for student in new_students:
             student.save_to_db()
+            added_students_counter.append(student.student_id)
         return {'status': 201,
-                'message': f"students '{added_students}' were successfully added"}, 201
+                'message': f"students '{added_students_counter}' were successfully added"}, 201
 
     @classmethod
     def delete(cls):
         """file: api_report/Swagger/StudentList/post.yml"""
-        student_ids = request.args.get('student_ids')
-        clean_student_id_list = _convert_string_to_int_list(student_ids, ',')
-        if type(clean_student_id_list) is Response:
-            return make_response(clean_student_id_list, 400)
-
+        student_id_list = request.args.get('student_id_list')
+        clean_student_id_list = _convert_string_to_int_list(student_id_list, separator=',')
         nonexistent_students = []
         deleted_students = []
         for student_id in clean_student_id_list:
@@ -83,5 +132,4 @@ class StudentList(Resource):
             else:
                 student.delete_from_db()
                 deleted_students.append(student_id)
-
         return StudentListResponse.create_response_for_delete_method(deleted_students, nonexistent_students)

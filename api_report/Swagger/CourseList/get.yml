@@ -1,0 +1,35 @@
+Get course list
+---
+tags:
+  - Course list
+parameters:
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
+responses:
+  200:
+    description: Get course list with info
+    schema:
+      $ref: '#/definitions/courses'
+produces:
+  - application/json
+definitions:
+  courses:
+    type: array
+    items:
+      properties:
+        course_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        students:
+          type: string
+    example:
+      - course_id: 1
+        name: Mathematics
+        description: Mathematics is the science and study of quality, structure, space, and change.
+        students: [3,4,8]

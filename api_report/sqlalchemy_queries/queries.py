@@ -5,16 +5,21 @@ from sqlalchemy import func
 
 from api_report.models.student import StudentModel
 from api_report.models.group import GroupModel
+from api_report.models.course import CourseModel
+from api_report.models.relationships import students_courses
 
 
-class ComplexQueries:
+class ComplexQuery:
     @staticmethod
-    def get_students_from_group(group_name: str):
+    def get_students_filter_by_group_and_course(group_id: int, course_id: int):
         query = StudentModel.query\
                             .outerjoin(GroupModel)\
-                            .filter_by(name=group_name)\
+                            .outerjoin(students_courses)\
+                            .outerjoin(CourseModel)\
+                            .where(GroupModel.group_id == group_id,
+                                   CourseModel.course_id == course_id)\
                             .order_by(StudentModel.student_id)
-        return query
+        return query.all()
 
     @staticmethod
     def get_groups_filter_by_student_count(student_count: int):

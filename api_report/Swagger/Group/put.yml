@@ -1,0 +1,44 @@
+Update group info
+---
+tags:
+  - Group
+parameters:
+  - name: group_id
+    in: path
+    required: true
+    type: integer
+  - name: Group info
+    in: body
+    schema:
+      $ref: "#definitions/put_group"
+
+responses:
+  200:
+    description: Update group info
+    schema:
+      $ref: '#/definitions/put_group'
+produces:
+  - application/json
+
+definitions:
+  put_group:
+      type: object
+      properties:
+        name:
+          type: string
+        add_students:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+        delete_students:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+      example:
+        name: XY-12
+        add_students: [ 1, 2, 3 ]
+        delete_students: [ 4, 5, 6 ]

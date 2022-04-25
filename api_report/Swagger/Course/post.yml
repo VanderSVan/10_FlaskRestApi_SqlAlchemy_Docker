@@ -1,0 +1,40 @@
+Add new course into db
+---
+tags:
+  - Course
+parameters:
+  - name: course_id
+    in: path
+    required: true
+    type: integer
+  - name: Course info
+    in: body
+    schema:
+      $ref: "#definitions/post_course"
+
+responses:
+  200:
+    description: Add new course into db
+    schema:
+      $ref: '#/definitions/post_course'
+produces:
+  - application/json
+
+definitions:
+  post_course:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        students:
+          type: array
+          items:
+            properties:
+              student_id:
+                type: integer
+      example:
+        name: Physics
+        description: it's pain
+        students: [14, 19, 23]
