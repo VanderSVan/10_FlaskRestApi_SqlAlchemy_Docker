@@ -1,0 +1,58 @@
+Update students list
+---
+tags:
+  - Student list
+parameters:
+  - name: Student info
+    in: body
+    schema:
+      $ref: "#definitions/put_student_list"
+    responses:
+      200:
+        description: Add students to db
+responses:
+  200:
+    description: Ok
+    schema:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+      example:
+        status: 200
+        message: students '[1, 2]' were successfully updated
+produces:
+  - application/json
+
+definitions:
+  put_student_list:
+    type: array
+    items:
+      properties:
+        student_id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        group_id:
+          type: integer
+        courses:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+    example:
+      - student_id: 1
+        first_name: John
+        last_name: Marlin
+        group_id: 1
+        courses: [1, 2, 3]
+      - student_id: 2
+        first_name: Alex
+        last_name: Brown
+        group_id: 1
+        courses: [4, 5]

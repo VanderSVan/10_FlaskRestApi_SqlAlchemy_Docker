@@ -1,0 +1,50 @@
+Add student list
+---
+tags:
+  - Student list
+parameters:
+  - name: Student info
+    in: body
+    schema:
+      $ref: "#definitions/post_student_list"
+
+responses:
+  200:
+    description: Ok
+    schema:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+      example:
+        status: 200
+        message: students '[1, 2]' were successfully added
+produces:
+  - application/json
+
+definitions:
+  post_student_list:
+    type: array
+    items:
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        group_id:
+          type: integer
+        courses:
+          type: array
+          items:
+            properties:
+              course_id:
+                type: integer
+    example:
+      - first_name: John
+        last_name: Marlin
+      - first_name: Alex
+        last_name: Brown
+        group_id: 3
+        courses: [ 4, 5 ]

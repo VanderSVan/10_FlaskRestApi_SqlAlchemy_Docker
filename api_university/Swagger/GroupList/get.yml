@@ -1,0 +1,41 @@
+Get group list
+---
+tags:
+  - Group list
+parameters:
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
+  - name: student_count
+    in: query
+    required: false
+    type: integer
+    description: Finds all groups with less or equals student count
+responses:
+  200:
+    description: Ok
+    schema:
+      $ref: '#/definitions/get_group_list'
+produces:
+  - application/json
+definitions:
+  get_group_list:
+    type: object
+    properties:
+      group_id:
+        type: string
+      name:
+        type: string
+      students:
+        type: array
+        items:
+          type: integer
+    example:
+      - group_id: 1
+        name: YT-25
+        students: [ 3,4,8 ]
+      - group_id: 2
+        name: AB-38
+        students: [5,6,7]

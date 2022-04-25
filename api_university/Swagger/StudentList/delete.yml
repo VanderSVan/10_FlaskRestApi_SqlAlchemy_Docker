@@ -1,0 +1,24 @@
+Delete student list from db
+---
+tags:
+  - Student list
+parameters:
+  - name: student_id_list
+    in: query
+    required: true
+    type: string
+responses:
+  200:
+    description: Ok
+    schema:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+      example:
+        status: 200
+        message: students '[1]' were successfully deleted and students '[2]' not found
+produces:
+  - application/json

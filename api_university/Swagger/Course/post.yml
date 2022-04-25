@@ -1,4 +1,4 @@
-Add new course into db
+Add new course to db
 ---
 tags:
   - Course
@@ -14,9 +14,17 @@ parameters:
 
 responses:
   200:
-    description: Add new course into db
+    description: Ok
     schema:
-      $ref: '#/definitions/post_course'
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+      example:
+        status: 200
+        message: course '1' was successfully created
 produces:
   - application/json
 
