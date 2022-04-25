@@ -1,4 +1,4 @@
-from api_report.db.db_sqlalchemy import db
+from api_university.db.db_sqlalchemy import db
 
 # relationship many to many
 students_courses = db.Table('students_courses',

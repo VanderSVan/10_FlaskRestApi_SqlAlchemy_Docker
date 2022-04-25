@@ -2,9 +2,9 @@ from flask import request
 from flask_restful import Resource
 from marshmallow import INCLUDE
 
-from api_report.models.group import GroupModel
-from api_report.schemas.group import GroupSchema
-from api_report.sqlalchemy_queries.queries import ComplexQuery
+from api_university.models.group import GroupModel
+from api_university.schemas.group import GroupSchema
+from api_university.sqlalchemy_queries.queries import ComplexQuery
 
 
 short_group_schema = GroupSchema(only=('group_id', 'name',))
@@ -17,7 +17,7 @@ full_group_list_schema = GroupSchema(many=True)
 class Group(Resource):
     @classmethod
     def get(cls, group_id):
-        """file: api_report/Swagger/Group/get.yml"""
+        """file: api_university/Swagger/Group/get.yml"""
         group = GroupModel.find_by_id_or_404(group_id)
         if request.args.get('full', 'false').lower() == 'true':
             response = full_group_schema.dump(group), 200
@@ -27,7 +27,7 @@ class Group(Resource):
 
     @classmethod
     def post(cls, group_id):
-        """file: api_report/Swagger/Group/post.yml"""
+        """file: api_university/Swagger/Group/post.yml"""
         group_json = request.get_json()
         group_json['group_id'] = group_id
         new_group = full_group_schema.load(group_json, unknown=INCLUDE)
@@ -36,7 +36,7 @@ class Group(Resource):
 
     @classmethod
     def put(cls, group_id):
-        """file: api_report/Swagger/Group/put.yml"""
+        """file: api_university/Swagger/Group/put.yml"""
         group_json = request.get_json()
         group_json['group_id'] = group_id
         updated_group = full_group_schema.load(group_json, partial=True, unknown=INCLUDE)
@@ -46,7 +46,7 @@ class Group(Resource):
     
     @classmethod
     def delete(cls, group_id):
-        """file: api_report/Swagger/Group/delete.yml"""
+        """file: api_university/Swagger/Group/delete.yml"""
         group = GroupModel.find_by_id_or_404(group_id)
         group.delete_from_db()
         return {'status': 200, 'message': f"group '{group_id}' was successfully deleted"}, 200
@@ -55,7 +55,7 @@ class Group(Resource):
 class GroupList(Resource):
     @classmethod
     def get(cls):
-        """file: api_report/Swagger/GroupList/get.yml"""
+        """file: api_university/Swagger/GroupList/get.yml"""
         student_count = request.args.get('student_count')
         if student_count:
             try:

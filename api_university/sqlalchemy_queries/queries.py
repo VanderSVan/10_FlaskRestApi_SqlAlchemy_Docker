@@ -3,10 +3,10 @@
 
 from sqlalchemy import func
 
-from api_report.models.student import StudentModel
-from api_report.models.group import GroupModel
-from api_report.models.course import CourseModel
-from api_report.models.relationships import students_courses
+from api_university.models.student import StudentModel
+from api_university.models.group import GroupModel
+from api_university.models.course import CourseModel
+from api_university.models.relationships import students_courses
 
 
 class ComplexQuery:

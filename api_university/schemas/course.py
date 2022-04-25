@@ -1,10 +1,10 @@
 from marshmallow import Schema, fields, validate, pre_load, post_load
 from flask import request
 
-from api_report.db.db_sqlalchemy import db
-from api_report.ma import ma
-from api_report.models.course import CourseModel
-from api_report.models.student import StudentModel
+from api_university.db.db_sqlalchemy import db
+from api_university.ma import ma
+from api_university.models.course import CourseModel
+from api_university.models.student import StudentModel
 
 
 class CourseSchema(ma.SQLAlchemyAutoSchema):

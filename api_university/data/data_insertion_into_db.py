@@ -1,14 +1,14 @@
 # !!! Inserting data into an empty database only !!!
 
-from api_report.db.db_sqlalchemy import db as initialized_db
-from api_report.models.student import StudentModel
-from api_report.models.group import GroupModel
-from api_report.models.course import CourseModel
-from api_report.data.input_data import first_names_list, last_names_list, courses_dict
-from api_report.data.data_preparation import (generate_group_instances,
-                                              generate_course_instances,
-                                              generate_available_places_in_groups,
-                                              generate_student_instances)
+from api_university.db.db_sqlalchemy import db as initialized_db
+from api_university.models.student import StudentModel
+from api_university.models.group import GroupModel
+from api_university.models.course import CourseModel
+from api_university.data.input_data import first_names_list, last_names_list, courses_dict
+from api_university.data.data_preparation import (generate_group_instances,
+                                                  generate_course_instances,
+                                                  generate_available_places_in_groups,
+                                                  generate_student_instances)
 
 
 def insert_data_to_db(db: initialized_db) -> None:

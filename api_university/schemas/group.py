@@ -1,10 +1,10 @@
 from marshmallow import pre_load
 from flask import request
 
-from api_report.db.db_sqlalchemy import db
-from api_report.ma import ma
-from api_report.models.group import GroupModel
-from api_report.models.student import StudentModel
+from api_university.db.db_sqlalchemy import db
+from api_university.ma import ma
+from api_university.models.group import GroupModel
+from api_university.models.student import StudentModel
 
 
 class GroupSchema(ma.SQLAlchemyAutoSchema):

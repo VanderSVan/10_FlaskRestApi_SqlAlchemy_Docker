@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from sqlalchemy import func, asc
 
-from api_report.db.db_sqlalchemy import db
+from api_university.db.db_sqlalchemy import db
 from .relationships import students_courses
 
 

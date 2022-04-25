@@ -2,13 +2,13 @@ from flask import request
 from flask_restful import Resource
 from marshmallow import INCLUDE
 
-from api_report.models.student import StudentModel
-from api_report.models.course import CourseModel
-from api_report.models.group import GroupModel
-from api_report.schemas.student import ShortStudentSchema, FullStudentSchema
-from api_report.sqlalchemy_queries.queries import ComplexQuery
-from api_report.resources.utils import (StudentListResponse,
-                                        _convert_string_to_int_list)
+from api_university.models.student import StudentModel
+from api_university.models.course import CourseModel
+from api_university.models.group import GroupModel
+from api_university.schemas.student import ShortStudentSchema, FullStudentSchema
+from api_university.sqlalchemy_queries.queries import ComplexQuery
+from api_university.resources.utils import (StudentListResponse,
+                                            _convert_string_to_int_list)
 
 short_student_schema = ShortStudentSchema()
 full_student_schema = FullStudentSchema()
@@ -20,7 +20,7 @@ full_student_list_schema = FullStudentSchema(many=True)
 class Student(Resource):
     @classmethod
     def get(cls, student_id):
-        """file: api_report/Swagger/Student/delete.yml"""
+        """file: api_university/Swagger/Student/delete.yml"""
         student = StudentModel.find_by_id_or_404(student_id)
         if request.args.get('full', 'false').lower() == 'true':
             response = full_student_schema.dump(student), 200
@@ -30,7 +30,7 @@ class Student(Resource):
 
     @classmethod
     def put(cls, student_id):
-        """file: api_report/Swagger/Student/put.yml"""
+        """file: api_university/Swagger/Student/put.yml"""
         StudentModel.find_by_id_or_404(student_id)
         student_json = request.get_json()
         student_json['student_id'] = student_id
@@ -41,7 +41,7 @@ class Student(Resource):
 
     @classmethod
     def post(cls, student_id):
-        """file: api_report/Swagger/Student/put.yml"""
+        """file: api_university/Swagger/Student/put.yml"""
         StudentModel.not_find_by_id_or_400(student_id)
         student_json = request.get_json()
         student_json['student_id'] = student_id
@@ -51,7 +51,7 @@ class Student(Resource):
 
     @classmethod
     def delete(cls, student_id):
-        """file: api_report/Swagger/StudentList/post.yml"""
+        """file: api_university/Swagger/StudentList/post.yml"""
         student = StudentModel.find_by_id_or_404(student_id)
         student.delete_from_db()
         return {'status': 200, 'message': f"student '{student_id}' was successfully deleted"}, 200
@@ -60,7 +60,7 @@ class Student(Resource):
 class StudentList(Resource):
     @classmethod
     def get(cls):
-        """file: api_report/Swagger/StudentList/get.yml"""
+        """file: api_university/Swagger/StudentList/get.yml"""
         group_id = request.args.get('group')
         course_id = request.args.get('course')
 
@@ -84,7 +84,7 @@ class StudentList(Resource):
 
     @classmethod
     def put(cls):
-        """file: api_report/Swagger/StudentList/put.yml"""
+        """file: api_university/Swagger/StudentList/put.yml"""
         student_list_json = request.get_json()
         updated_students = []
         nonexistent_students = []
@@ -102,7 +102,7 @@ class StudentList(Resource):
 
     @classmethod
     def post(cls):
-        """file: api_report/Swagger/StudentList/post.yml"""
+        """file: api_university/Swagger/StudentList/post.yml"""
         max_student_id, = StudentModel.get_max_student_id()
         student_list_json = request.get_json()
 
@@ -120,7 +120,7 @@ class StudentList(Resource):
 
     @classmethod
     def delete(cls):
-        """file: api_report/Swagger/StudentList/post.yml"""
+        """file: api_university/Swagger/StudentList/post.yml"""
         student_id_list = request.args.get('student_id_list')
         clean_student_id_list = _convert_string_to_int_list(student_id_list, separator=',')
         nonexistent_students = []

@@ -4,10 +4,10 @@ from flask_restful import Api
 from flasgger import Swagger
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
-from api_report.data.data_insertion_into_db import insert_data_to_db
-from api_report.resources.student import Student, StudentList
-from api_report.resources.course import Course, CourseList
-from api_report.resources.group import Group, GroupList
+from api_university.data.data_insertion_into_db import insert_data_to_db
+from api_university.resources.student import Student, StudentList
+from api_university.resources.course import Course, CourseList
+from api_university.resources.group import Group, GroupList
 
 
 def create_app(test_config=False):
@@ -69,8 +69,8 @@ def create_app(test_config=False):
 
 
 if __name__ == '__main__':
-    from api_report.db.db_sqlalchemy import db
-    from api_report.ma import ma
+    from api_university.db.db_sqlalchemy import db
+    from api_university.ma import ma
 
     app = create_app()
     db.init_app(app)

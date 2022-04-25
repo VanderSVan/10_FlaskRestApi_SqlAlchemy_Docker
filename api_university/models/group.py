@@ -1,5 +1,5 @@
 from sqlalchemy import asc
-from api_report.db.db_sqlalchemy import db
+from api_university.db.db_sqlalchemy import db
 
 
 class GroupModel(db.Model):

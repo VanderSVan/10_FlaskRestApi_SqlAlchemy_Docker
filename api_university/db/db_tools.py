@@ -2,11 +2,11 @@ from psycopg2 import Error
 from psycopg2.extensions import connection as psycopg2_conn
 from dataclasses import dataclass
 
-from api_report.db.pure_sql_queries import (DatabaseSQLOperation,
-                                            RoleSQLOperation,
-                                            UserSQLOperation,
-                                            PrivilegeSQLOperation)
-from api_report.db.utils import try_except_decorator
+from api_university.db.pure_sql_queries import (DatabaseSQLOperation,
+                                                RoleSQLOperation,
+                                                UserSQLOperation,
+                                                PrivilegeSQLOperation)
+from api_university.db.utils import try_except_decorator
 
 
 @dataclass

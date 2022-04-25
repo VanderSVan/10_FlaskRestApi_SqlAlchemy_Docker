@@ -1,5 +1,5 @@
 from sqlalchemy import asc, any_
-from api_report.db.db_sqlalchemy import db
+from api_university.db.db_sqlalchemy import db
 
 
 class CourseModel(db.Model):
