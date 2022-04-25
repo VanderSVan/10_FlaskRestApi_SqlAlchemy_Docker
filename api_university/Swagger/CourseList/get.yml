@@ -10,13 +10,13 @@ parameters:
     description: true or false
 responses:
   200:
-    description: Get course list with info
+    description: Ok
     schema:
-      $ref: '#/definitions/courses'
+      $ref: '#/definitions/get_courses'
 produces:
   - application/json
 definitions:
-  courses:
+  get_courses:
     type: array
     items:
       properties:

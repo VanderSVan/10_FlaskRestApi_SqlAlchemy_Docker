@@ -14,13 +14,13 @@ parameters:
     description: true or false
 responses:
   200:
-    description: Get group info by group_id
+    description: Ok
     schema:
-      $ref: '#/definitions/group'
+      $ref: '#/definitions/get_group'
 produces:
   - application/json
 definitions:
-  group:
+  get_group:
     type: object
     properties:
       group_id:

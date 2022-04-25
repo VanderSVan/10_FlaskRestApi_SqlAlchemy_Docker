@@ -1,35 +1,38 @@
-Update course info
+Update group info
 ---
 tags:
-  - Course
+  - Group
 parameters:
-  - name: course_id
+  - name: group_id
     in: path
     required: true
     type: integer
-  - name: Course info
+  - name: Group info
     in: body
     schema:
-      $ref: "#definitions/put_course"
-    responses:
-      200:
-        description: Update course
+      $ref: "#definitions/put_group"
 
 responses:
   200:
-    description: Update course info
+    description: Ok
     schema:
-      $ref: '#/definitions/put_course'
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+      example:
+        status: 200
+        message: group '1' was successfully updated
 produces:
   - application/json
 
 definitions:
-  put_course:
+  put_group:
       type: object
       properties:
         name:
-          type: string
-        description:
           type: string
         add_students:
           type: array
@@ -44,7 +47,6 @@ definitions:
               course_id:
                 type: integer
       example:
-        name: English
-        description: it's amazing
-        add_students: [1, 2, 3]
-        delete_students: [4, 5, 6]
+        name: XY-12
+        add_students: [ 1, 2, 3 ]
+        delete_students: [ 4, 5, 6 ]

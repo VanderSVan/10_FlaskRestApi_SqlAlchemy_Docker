@@ -16,11 +16,11 @@ responses:
   200:
     description: Get course info by course_id
     schema:
-      $ref: '#/definitions/course'
+      $ref: '#/definitions/get_course'
 produces:
   - application/json
 definitions:
-  course:
+  get_course:
     type: object
     properties:
       course_id:
