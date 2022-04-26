@@ -86,6 +86,7 @@ if __name__ == '__main__':
     # Constants
     test_number_of_groups = 10
     test_number_of_students = 10
+    limit_output = 5
 
     # Create list of group objects
     all_groups = generate_group_instances(number_of_instance=test_number_of_groups)
@@ -104,7 +105,6 @@ if __name__ == '__main__':
                                               groups=group_ids,
                                               courses=all_courses)
 
-    limit_output = 5
     all_students.sort(key=lambda inst: inst.student_id)
 
     for student_num, student in enumerate(all_students[:limit_output], start=1):
