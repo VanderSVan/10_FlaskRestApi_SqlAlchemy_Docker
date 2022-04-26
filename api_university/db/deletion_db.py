@@ -1,30 +1,41 @@
 from psycopg2 import DatabaseError
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from utils import PsqlDatabaseConnection
-from db_tools import (Database,
-                      DatabaseRole,
-                      DatabaseUser,
-                      DatabasePrivilege)
+from db_operations import (Database,
+                           DatabaseRole,
+                           DatabaseUser,
+                           DatabasePrivilege)
 
 
-if __name__ == '__main__':
-    ####################!!! WARNING !!!####################
-    # !!! COMPLETE DELETION OF DATABASE TOGETHER WITH USERS !!!
+def delete_db(dbname_superuser: str,
+              superuser_name: str,
+              superuser_password: str,
+              dbname_user: str,
+              user_name: str,
+              user_password: str,
+              role_name: str,
+              host: str,
+              port: str,
+              isolation_level=ISOLATION_LEVEL_AUTOCOMMIT):
+    """
+    WARNING!
+    COMPLETE DELETION OF DATABASE TOGETHER WITH USERS!
+    """
     try:
-        with PsqlDatabaseConnection(dbname="postgres",
-                                    user="postgres",
-                                    password="12345",
-                                    host="127.0.0.1",
-                                    port="5432",
-                                    isolation_level=ISOLATION_LEVEL_AUTOCOMMIT) as db:
+        with PsqlDatabaseConnection(dbname=dbname_superuser,
+                                    user=superuser_name,
+                                    password=superuser_password,
+                                    host=host,
+                                    port=port,
+                                    isolation_level=isolation_level) as db:
             # Init db:
-            existing_db = Database('university', db.connection)
+            existing_db = Database(dbname_user, db.connection)
 
             # Init role
-            existing_role = DatabaseRole('admins', db.connection)
+            existing_role = DatabaseRole(role_name, db.connection)
 
             # Init user:
-            existing_user = DatabaseUser('admin', "1111", db.connection)
+            existing_user = DatabaseUser(user_name, user_password, db.connection)
 
             # Init role privilege:
             existing_role_privileges = DatabasePrivilege(existing_db.db_name,
@@ -52,3 +63,13 @@ if __name__ == '__main__':
         print(error)
 
 
+if __name__ == '__main__':
+    delete_db(dbname_superuser="postgres",
+              superuser_name="postgres",
+              superuser_password="12345",
+              dbname_user="university",
+              user_name="admin",
+              user_password="1111",
+              role_name="admins",
+              host="127.0.0.1",
+              port="5432")
