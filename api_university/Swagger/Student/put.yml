@@ -38,7 +38,13 @@ definitions:
         type: string
       group_id:
         type: integer
-      courses:
+      add_courses:
+        type: array
+        items:
+          properties:
+            course_id:
+              type: integer
+      delete_courses:
         type: array
         items:
           properties:
@@ -48,5 +54,6 @@ definitions:
       first_name: John
       last_name: Marlin
       group_id: 1
-      courses: [ 1, 2, 3 ]
+      add_courses: [ 1, 2, 3 ]
+      delete_courses: [ 4, 5, 6 ]
 

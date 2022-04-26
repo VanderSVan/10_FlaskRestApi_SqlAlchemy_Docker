@@ -1,4 +1,3 @@
-from flask import abort
 from marshmallow import INCLUDE
 
 
@@ -57,31 +56,8 @@ class StudentListResponse:
 #             setattr(student, key, new_value)
 
 
-def _get_json_default_error(err: Exception):
-    return {'status': 400,
-            'message': f'{err}',
-            'type error': f'{type(err)}'}
+# def _get_json_default_error(err: Exception):
+#     return {'status': 400,
+#             'message': f'{err}',
+#             'type error': f'{type(err)}'}
 
-
-def handle_query_string(func):
-    def inner_wrapper(self, *args, **kwargs):
-        try:
-            return func(self, *args, **kwargs)
-        except ValueError as val_err:
-            print('Got ValueError =', val_err)
-            abort(400, description=f'{val_err}')
-        except Exception as default_err:
-            print(f"Got an type Exception: {type(default_err)} "
-                  f"message: {default_err}")
-            abort(400, description=f"{default_err}")
-
-    return inner_wrapper
-
-
-@handle_query_string
-def _convert_string_to_int_list(str_: str, separator: str):
-    if not str_:
-        abort(400, description="Set student id list")
-
-    str_list = str_.split(separator)
-    return [int(string_.strip()) for string_ in str_list]

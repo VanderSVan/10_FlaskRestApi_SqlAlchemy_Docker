@@ -11,7 +11,7 @@ parameters:
     in: query
     required: false
     type: string
-    description: yes or no
+    description: true or false
 responses:
   200:
     description: Get student info by student_id

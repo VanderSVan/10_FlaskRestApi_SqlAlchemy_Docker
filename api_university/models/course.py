@@ -1,5 +1,6 @@
-from sqlalchemy import asc, any_
+from sqlalchemy import asc
 from api_university.db.db_sqlalchemy import db
+from .relationships import students_courses
 
 
 class CourseModel(db.Model):
@@ -15,16 +16,8 @@ class CourseModel(db.Model):
                                                   order_by='CourseModel.course_id.asc()'),
                                order_by='StudentModel.student_id.asc()')
 
-    # students = db.relationship('StudentModel',
-    #                            secondary='students_courses',
-    #                            back_populates="courses",
-    #                            order_by='StudentModel.student_id.asc()')
-
-    # students = db.relationship('StudentModel',
-    #                            secondary='students_courses',
-    #                            back_populates="courses",
-    #                            overlaps="all_students",
-    #                            order_by='StudentModel.student_id.asc()')
+    def __repr__(self):
+        return f"CourseModel {self.course_id}"
 
     @classmethod
     def get_all_courses(cls):
@@ -40,7 +33,6 @@ class CourseModel(db.Model):
 
     @classmethod
     def find_by_id_or_404(cls, course_id: int) -> "CourseModel":
-        # return cls.query.filter_by(course_id=id_).first()
         return cls.query.get_or_404(course_id, description=f"course '{course_id}' not found")
 
     @classmethod
@@ -54,28 +46,6 @@ class CourseModel(db.Model):
         else:
             selected_courses = [cls.find_by_id_or_404(course) for course in course_ids]
         return selected_courses
-
-    # @classmethod
-    # def find_by_several_ids(cls, course_ids: list):
-    #     return cls.query.filter_by(course_id=any_(course_ids)).all()
-    #
-    # @classmethod
-    # def check_if_exists(cls, course_ids: list) -> (list or False, None or int):
-    #     if course_ids is None:
-    #         return False, course_ids
-    #     courses = []
-    #     for course_id in course_ids:
-    #         course = cls.find_by_id_or_404(course_id)
-    #         if course is None:
-    #             return False, course_id
-    #         else:
-    #             courses.append(course)
-    #             continue
-    #     return courses, None
-    #
-    # @classmethod
-    # def ids_to_objs(cls, ids_: list) -> list['CourseModel']:
-    #     return [cls.find_by_id_or_404(course) for course in ids_]
 
     def save_to_db(self) -> None:
         db.session.add(self)
