@@ -1,5 +1,6 @@
 from string import ascii_uppercase
 from random import choices, sample, choice, randint
+
 from api_university.models.student import StudentModel
 from api_university.models.group import GroupModel
 from api_university.models.course import CourseModel
@@ -30,7 +31,7 @@ def _generate_group_name(letters: str, separator: str) -> str:
 
 def generate_group_instances(number_of_instance: int) -> list:
     """
-    Type: AA-11
+    Model: AA-11
     Generates random group instances.
     """
     return [GroupModel(group_id=group_id,
