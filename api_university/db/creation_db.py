@@ -1,27 +1,38 @@
 from psycopg2 import DatabaseError
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from utils import PsqlDatabaseConnection
-from db_tools import (Database,
-                      DatabaseRole,
-                      DatabaseUser,
-                      DatabasePrivilege)
+from db_operations import (Database,
+                           DatabaseRole,
+                           DatabaseUser,
+                           DatabasePrivilege)
 
 
-if __name__ == '__main__':
-    # first connection via superuser
+def create_db(dbname_superuser: str,
+              superuser_name: str,
+              superuser_password: str,
+              dbname_user: str,
+              user_name: str,
+              user_password: str,
+              role_name: str,
+              host: str,
+              port: str,
+              isolation_level=ISOLATION_LEVEL_AUTOCOMMIT):
+    """
+    First connection through superuser.
+    """
     try:
-        with PsqlDatabaseConnection(dbname="postgres",
-                                    user="postgres",
-                                    password="12345",
-                                    host="127.0.0.1",
-                                    port="5432",
-                                    isolation_level=ISOLATION_LEVEL_AUTOCOMMIT) as db:
+        with PsqlDatabaseConnection(dbname=dbname_superuser,
+                                    user=superuser_name,
+                                    password=superuser_password,
+                                    host=host,
+                                    port=port,
+                                    isolation_level=isolation_level) as db:
             # Create new database:
-            new_db = Database('university', db.connection)
+            new_db = Database(dbname_user, db.connection)
             new_db.create_postgresql_db()
 
             # Create new role:
-            admins_role = DatabaseRole('admins', db.connection)
+            admins_role = DatabaseRole(role_name, db.connection)
             admins_role.create_new_role()
 
             # Privilege setting:
@@ -29,7 +40,7 @@ if __name__ == '__main__':
             admins_role_privileges.grant_all_privileges()
 
             # Create new user:
-            admin_user = DatabaseUser('admin', "1111", db.connection)
+            admin_user = DatabaseUser(user_name, user_password, db.connection)
             admin_user.create_new_user()
 
             # Join user to role:
@@ -39,4 +50,17 @@ if __name__ == '__main__':
         print(db_error)
     except Exception as error:
         print(error)
+
+
+if __name__ == '__main__':
+    create_db(dbname_superuser="postgres",
+              superuser_name="postgres",
+              superuser_password="12345",
+              dbname_user="university",
+              user_name="admin",
+              user_password="1111",
+              role_name="admins",
+              host="127.0.0.1",
+              port="5432")
+
 
