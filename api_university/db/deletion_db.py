@@ -1,10 +1,14 @@
 from psycopg2 import DatabaseError
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from utils import PsqlDatabaseConnection
-from db_operations import (Database,
-                           DatabaseRole,
-                           DatabaseUser,
-                           DatabasePrivilege)
+
+from api_university.config import Configuration
+from api_university.db.utils import PsqlDatabaseConnection
+from api_university.db.db_operations import (Database,
+                                             DatabaseRole,
+                                             DatabaseUser,
+                                             DatabasePrivilege)
+
+db_config = Configuration.DATABASE
 
 
 def delete_db(dbname_superuser: str,
@@ -67,9 +71,9 @@ if __name__ == '__main__':
     delete_db(dbname_superuser="postgres",
               superuser_name="postgres",
               superuser_password="12345",
-              dbname_user="university",
-              user_name="admin",
-              user_password="1111",
-              role_name="admins",
+              dbname_user=db_config['db_name'],
+              user_name=db_config['user_name'],
+              user_password=db_config['user_password'],
+              role_name=db_config['role_name'],
               host="127.0.0.1",
               port="5432")

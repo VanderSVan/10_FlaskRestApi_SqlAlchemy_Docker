@@ -7,7 +7,9 @@ from sqlalchemy.exc import IntegrityError
 
 from api_university.db.db_sqlalchemy import db
 from api_university.ma import ma
-from api_university.config import Configuration, DevelopmentConfiguration, TestingConfiguration
+from api_university.config import (Configuration,
+                                   DevelopmentConfiguration,
+                                   TestingConfiguration)
 from api_university.data.data_insertion_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
 from api_university.resources.course import Course, CourseList
