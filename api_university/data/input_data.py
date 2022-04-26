@@ -1,4 +1,3 @@
-
 courses_dict = {'Mathematics': "Mathematics is the science and study of quality, structure, space, and change.",
                 'Chemistry': "Walter H. White : Chemistry is, well technically, chemistry is the study of matter. "
                              "But I prefer to see it as the study of change.",
