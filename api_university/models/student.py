@@ -26,6 +26,10 @@ class StudentModel(db.Model):
     @classmethod
     def get_max_student_id(cls) -> "StudentModel":
         return cls.query.with_entities(func.max(cls.student_id)).first()
+
+    @classmethod
+    def find_by_id(cls, student_id: int) -> "StudentModel":
+        return cls.query.filter_by(student_id=student_id).first()
    
     @classmethod
     def find_by_id_or_404(cls, student_id: int) -> "StudentModel":
