@@ -44,20 +44,3 @@ class StudentListResponse:
                  'message': f"students '{deleted_students}' were successfully deleted and "
                             f"students '{nonexistent_students}' not found"}, 200)
         return tuple_output
-
-
-# def set_new_values_for_student(student, json, course_model):
-#     for key, new_value in json.items():
-#         getattr(student, key)
-#         if key == 'courses':
-#             correct_course_objs = course_model.get_courses_by_ids(json.get('courses'))
-#             setattr(student, key, correct_course_objs)
-#         else:
-#             setattr(student, key, new_value)
-
-
-# def _get_json_default_error(err: Exception):
-#     return {'status': 400,
-#             'message': f'{err}',
-#             'type error': f'{type(err)}'}
-
