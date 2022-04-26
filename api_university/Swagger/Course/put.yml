@@ -40,13 +40,13 @@ definitions:
           type: array
           items:
             properties:
-              course_id:
+              student_id:
                 type: integer
         delete_students:
           type: array
           items:
             properties:
-              course_id:
+              student_id:
                 type: integer
       example:
         name: English

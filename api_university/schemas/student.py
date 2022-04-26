@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, validate, pre_load, post_load
-from flask import abort
+from flask import request, abort
+
 from api_university.db.db_sqlalchemy import db
 from api_university.ma import ma
 from api_university.models.student import StudentModel
@@ -34,16 +35,37 @@ class FullStudentSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
         include_relationships = True
         ordered = True
-        load_only = ('group_id', )
+        load_only = ('group_id',)
         dump_only = ('group_id', 'courses')
         sqla_session = db.session
 
     @pre_load
     def process_data(self, data, **kwargs):
-        if data.get('courses'):
-            data['courses'] = CourseModel.get_courses_by_ids(data['courses'])
-        return data
+        if type(data) is dict:
+            if request.method == 'POST':
+                StudentModel.not_find_by_id_or_400(data.get('student_id'))
+                if data.get('courses'):
+                    data['courses'] = CourseModel.get_courses_by_ids(data['courses'])
 
+            if request.method == 'PUT':
+                if data.get('courses'):
+                    abort(400, description="only 'add_courses' and 'delete_courses'"
+                                           " fields are available in the 'PUT' method,"
+                                           " but was given 'courses' field")
+
+                student = StudentModel.find_by_id_or_404(data.get('student_id'))
+
+                if data.get('add_courses'):
+                    new_courses = CourseModel.get_courses_by_ids(data['add_courses'])
+                    student.courses.extend(new_courses)
+
+                if data.get('delete_courses'):
+                    deletion_courses = CourseModel.get_courses_by_ids(data['delete_courses'])
+                    student_courses_dict = dict.fromkeys(student.courses, True)
+                    for course in deletion_courses:
+                        student_courses_dict.pop(course, None)
+                    student.courses = list(student_courses_dict)
+        return data
 
 # # pure marshmallow
 # class FullStudentSchema(Schema):

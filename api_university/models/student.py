@@ -1,6 +1,4 @@
-from dataclasses import dataclass
 from sqlalchemy import func, asc
-
 from api_university.db.db_sqlalchemy import db
 from .relationships import students_courses
 
@@ -13,22 +11,6 @@ class StudentModel(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
 
     group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
-    # group = db.relationship('GroupModel',
-    #                         backref=db.backref('groups',
-    #                                            order_by='StudentModel.student_id.asc()'),
-    #                         overlaps="groups")
-
-    # courses = db.relationship('CourseModel',
-    #                           secondary=students_courses,
-    #                           back_populates="students",
-    #                           order_by='CourseModel.course_id.asc()')
-
-    # courses = db.relationship('CourseModel',
-    #                           secondary=students_courses,
-    #                           backref=db.backref('all_students',
-    #                                              order_by='StudentModel.student_id.asc()'),
-    #                           lazy='subquery',
-    #                           order_by='CourseModel.name.asc()')
 
     def __repr__(self):
         return f"StudentModel {self.student_id}"
@@ -46,10 +28,6 @@ class StudentModel(db.Model):
         return cls.query.with_entities(func.max(cls.student_id)).first()
    
     @classmethod
-    def find_by_id(cls, student_id: int) -> "StudentModel":
-        return cls.query.filter_by(student_id=student_id).first()
-
-    @classmethod
     def find_by_id_or_404(cls, student_id: int) -> "StudentModel":
         return cls.query.get_or_404(student_id, description=f"student '{student_id}' not found")
 
@@ -64,10 +42,6 @@ class StudentModel(db.Model):
         else:
             selected_students = [cls.find_by_id_or_404(student) for student in student_ids]
         return selected_students
-    
-    @classmethod
-    def get_full_info(cls) -> "StudentModel":
-        return cls.query.all()
 
     def save_to_db(self) -> None:
         db.session.add(self)

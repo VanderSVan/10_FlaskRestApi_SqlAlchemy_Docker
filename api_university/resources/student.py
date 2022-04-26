@@ -7,8 +7,7 @@ from api_university.models.course import CourseModel
 from api_university.models.group import GroupModel
 from api_university.schemas.student import ShortStudentSchema, FullStudentSchema
 from api_university.sqlalchemy_queries.queries import ComplexQuery
-from api_university.resources.utils import (StudentListResponse,
-                                            _convert_string_to_int_list)
+from api_university.resources.utils import StudentListResponse
 
 short_student_schema = ShortStudentSchema()
 full_student_schema = FullStudentSchema()
@@ -34,7 +33,6 @@ class Student(Resource):
         StudentModel.find_by_id_or_404(student_id)
         student_json = request.get_json()
         student_json['student_id'] = student_id
-        print(student_json)
         updated_student = full_student_schema.load(student_json, partial=True, unknown=INCLUDE)
         updated_student.save_to_db()
         return {'status': 201, 'message': f"student '{student_id}' was successfully updated"}, 201
@@ -42,7 +40,6 @@ class Student(Resource):
     @classmethod
     def post(cls, student_id):
         """file: api_university/Swagger/Student/put.yml"""
-        StudentModel.not_find_by_id_or_400(student_id)
         student_json = request.get_json()
         student_json['student_id'] = student_id
         new_student = full_student_schema.load(student_json, unknown=INCLUDE)
@@ -68,7 +65,7 @@ class StudentList(Resource):
             student_list = ComplexQuery.get_students_filter_by_group_and_course(int(group_id), int(course_id))
         elif group_id:
             group_obj = GroupModel.find_by_id_or_404(int(group_id))
-            student_list = group_obj.all_students
+            student_list = group_obj.students
         elif course_id:
             course_obj = CourseModel.find_by_id_or_404(int(course_id))
             student_list = course_obj.students
@@ -104,6 +101,7 @@ class StudentList(Resource):
     def post(cls):
         """file: api_university/Swagger/StudentList/post.yml"""
         max_student_id, = StudentModel.get_max_student_id()
+        print(StudentModel.get_max_student_id())
         student_list_json = request.get_json()
 
         for student_json in student_list_json:
@@ -121,15 +119,16 @@ class StudentList(Resource):
     @classmethod
     def delete(cls):
         """file: api_university/Swagger/StudentList/post.yml"""
-        student_id_list = request.args.get('student_id_list')
-        clean_student_id_list = _convert_string_to_int_list(student_id_list, separator=',')
-        nonexistent_students = []
-        deleted_students = []
-        for student_id in clean_student_id_list:
-            student = StudentModel.find_by_id(student_id)
-            if not student:
-                nonexistent_students.append(student_id)
-            else:
-                student.delete_from_db()
-                deleted_students.append(student_id)
-        return StudentListResponse.create_response_for_delete_method(deleted_students, nonexistent_students)
+        deletion_students_json = request.get_json()
+        student_id_list = deletion_students_json.get('student_id_list')
+        if student_id_list:
+            nonexistent_students = []
+            deleted_students = []
+            for student_id in student_id_list:
+                student = StudentModel.find_by_id(student_id)
+                if not student:
+                    nonexistent_students.append(student_id)
+                else:
+                    student.delete_from_db()
+                    deleted_students.append(student_id)
+            return StudentListResponse.create_response_for_delete_method(deleted_students, nonexistent_students)
