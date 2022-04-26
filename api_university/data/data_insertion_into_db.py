@@ -16,6 +16,8 @@ def insert_data_to_db(db: initialized_db,
                       student_count: int,
                       lower_limit_students_in_group: int,
                       upper_limit_of_students_in_group: int) -> None:
+    """Inserts prepared data into an empty database only!"""
+
     if (StudentModel.query.count() == 0 and
             GroupModel.query.count() == 0 and
             CourseModel.query.count() == 0):
