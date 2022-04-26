@@ -110,4 +110,4 @@ if __name__ == '__main__':
         print(student_num)
         print('full name =', student.first_name, student.last_name, ';')
         print('in the group:', all_groups[student.group_id - 1].name, ';')
-        print('on courses:', list(map(lambda inst: inst.name, student.courses.all())), '\n')
+        print('on courses:', list(map(lambda inst: inst.name, student.courses)), '\n')
