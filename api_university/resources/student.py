@@ -101,7 +101,6 @@ class StudentList(Resource):
     def post(cls):
         """file: api_university/Swagger/StudentList/post.yml"""
         max_student_id, = StudentModel.get_max_student_id()
-        print(StudentModel.get_max_student_id())
         student_list_json = request.get_json()
 
         for student_json in student_list_json:
