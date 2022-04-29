@@ -1,4 +1,6 @@
 from sqlalchemy import asc
+
+from api_university.responses.response_strings import gettext_
 from api_university.db.db_sqlalchemy import db
 from .relationships import students_courses
 
@@ -33,11 +35,13 @@ class CourseModel(db.Model):
 
     @classmethod
     def find_by_id_or_404(cls, course_id: int) -> "CourseModel":
-        return cls.query.get_or_404(course_id, description=f"course '{course_id}' not found")
+        return cls.query.get_or_404(course_id,
+                                    description=gettext_("course_not_found").format(course_id))
 
     @classmethod
     def not_find_by_id_or_400(cls, course_id: int) -> None:
-        return cls.query.not_exists_or_400(course_id, description=f"course '{course_id}' already exists")
+        return cls.query.not_exists_or_400(course_id,
+                                           description=gettext_("course_exists").format(course_id))
 
     @classmethod
     def get_courses_by_ids(cls, course_ids: list) -> list["CourseModel"] or None:

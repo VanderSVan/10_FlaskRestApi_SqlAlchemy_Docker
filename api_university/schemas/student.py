@@ -18,7 +18,8 @@ class ShortStudentSchema(ma.SQLAlchemySchema):
     first_name = ma.auto_field(validate=[validate.Length(min=1, max=50)])
     last_name = ma.auto_field(validate=[validate.Length(min=1, max=50)])
     group_name = ma.Function(lambda obj: None if obj.group is None else obj.group.name)
-    course_names = ma.Function(lambda obj: ", ".join(list(map(lambda course: course.name, obj.courses))))
+    course_names = ma.Function(lambda obj: ", ".join(list(map(lambda course: course.name, obj.courses)))
+                               if obj.courses else None)
 
 
 class FullStudentSchema(ma.SQLAlchemyAutoSchema):

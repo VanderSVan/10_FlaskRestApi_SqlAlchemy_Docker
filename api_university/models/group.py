@@ -1,5 +1,7 @@
 from sqlalchemy import asc
+
 from api_university.db.db_sqlalchemy import db
+from api_university.responses.response_strings import gettext_
 
 
 class GroupModel(db.Model):
@@ -30,11 +32,13 @@ class GroupModel(db.Model):
 
     @classmethod
     def find_by_id_or_404(cls, group_id):
-        return cls.query.get_or_404(group_id, description=f"group '{group_id}' not found")
+        return cls.query.get_or_404(group_id,
+                                    description=gettext_("group_not_found").format(group_id))
 
     @classmethod
     def not_find_by_id_or_400(cls, group_id: int) -> None:
-        return cls.query.not_exists_or_400(group_id, description=f"group '{group_id}' already exists")
+        return cls.query.not_exists_or_400(group_id,
+                                           description=gettext_("group_exists").format(group_id))
 
     def save_to_db(self) -> None:
         db.session.add(self)
