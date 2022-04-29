@@ -34,17 +34,17 @@ def create_app(test_config=False, dev_config=False):
         template_file=os.path.join('Swagger', 'template.yml'),
         parse=True
     )
-
-    # create db if not exists
-    @application.before_first_request
-    def create_tables():
-        db.create_all()
-        insert_data_to_db(db,
-                          group_count=10,
-                          student_count=200,
-                          lower_limit_students_in_group=10,
-                          upper_limit_of_students_in_group=30)
-        db.session.commit()
+    if not test_config:
+        # create db if not exists
+        @application.before_first_request
+        def create_tables():
+            db.create_all()
+            insert_data_to_db(db,
+                              group_count=10,
+                              student_count=200,
+                              lower_limit_students_in_group=10,
+                              upper_limit_of_students_in_group=30)
+            db.session.commit()
 
     # Handlers
     @application.errorhandler(ValidationError)
@@ -57,10 +57,10 @@ def create_app(test_config=False, dev_config=False):
         print('Got IntegrityError =', err)
         return jsonify(err.orig.diag.message_detail), 400
 
-    @application.errorhandler(AttributeError)
-    def handle_attribute_errors(err):
-        print('Got AttributeError =', err)
-        return jsonify(err.args), 400
+    # @application.errorhandler(AttributeError)
+    # def handle_attribute_errors(err):
+    #     print('Got AttributeError =', err)
+    #     return jsonify(err.args), 400
 
     # RESOURCES:
     # Student

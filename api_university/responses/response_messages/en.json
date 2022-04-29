@@ -1,0 +1,24 @@
+{
+  "course_post": "course id={} was successfully created",
+  "course_put": "course id={} was successfully updated",
+  "course_delete": "course id={} was successfully deleted",
+  "course_not_found": "course id={} not found",
+  "course_exists": "course id={} already exists",
+
+  "group_post": "group id={} was successfully created",
+  "group_put": "group id={} was successfully updated",
+  "group_delete": "group id={} was successfully deleted",
+  "group_not_found": "group id={} not found",
+  "group_exists": "group id={} already exists",
+
+  "student_post": "student id={} was successfully created",
+  "student_put": "student id={} was successfully updated",
+  "student_delete": "student id={} was successfully deleted",
+  "student_not_found": "student id={} not found",
+  "student_exists": "student id={} already exists",
+
+  "student_list_post": "student ids={} were successfully added",
+  "student_list_put": "student ids={} were successfully updated",
+  "student_list_delete": "students ids={} were successfully deleted",
+  "student_list_not_found": "student ids={} not found"
+}

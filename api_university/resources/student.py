@@ -8,6 +8,7 @@ from api_university.models.group import GroupModel
 from api_university.schemas.student import ShortStudentSchema, FullStudentSchema
 from api_university.sqlalchemy_queries.queries import ComplexQuery
 from api_university.resources.utils import StudentListResponse
+from api_university.responses.response_strings import gettext_
 
 short_student_schema = ShortStudentSchema()
 full_student_schema = FullStudentSchema()
@@ -28,6 +29,15 @@ class Student(Resource):
         return response
 
     @classmethod
+    def post(cls, student_id):
+        """file: api_university/Swagger/Student/put.yml"""
+        student_json = request.get_json()
+        student_json['student_id'] = student_id
+        new_student = full_student_schema.load(student_json, unknown=INCLUDE)
+        new_student.save_to_db()
+        return {'status': 200, 'message': gettext_("student_post").format(student_id)}, 200
+
+    @classmethod
     def put(cls, student_id):
         """file: api_university/Swagger/Student/put.yml"""
         StudentModel.find_by_id_or_404(student_id)
@@ -35,23 +45,14 @@ class Student(Resource):
         student_json['student_id'] = student_id
         updated_student = full_student_schema.load(student_json, partial=True, unknown=INCLUDE)
         updated_student.save_to_db()
-        return {'status': 201, 'message': f"student '{student_id}' was successfully updated"}, 201
-
-    @classmethod
-    def post(cls, student_id):
-        """file: api_university/Swagger/Student/put.yml"""
-        student_json = request.get_json()
-        student_json['student_id'] = student_id
-        new_student = full_student_schema.load(student_json, unknown=INCLUDE)
-        new_student.save_to_db()
-        return {'status': 201, 'message': f"student '{student_id}' was successfully created"}, 201
+        return {'status': 200, 'message': gettext_("student_put").format(student_id)}, 200
 
     @classmethod
     def delete(cls, student_id):
         """file: api_university/Swagger/StudentList/post.yml"""
         student = StudentModel.find_by_id_or_404(student_id)
         student.delete_from_db()
-        return {'status': 200, 'message': f"student '{student_id}' was successfully deleted"}, 200
+        return {'status': 200, 'message': gettext_("student_delete").format(student_id)}, 200
 
 
 class StudentList(Resource):
@@ -80,6 +81,24 @@ class StudentList(Resource):
         return response
 
     @classmethod
+    def post(cls):
+        """file: api_university/Swagger/StudentList/post.yml"""
+        max_student_id, = StudentModel.get_max_student_id()
+        student_list_json = request.get_json()
+
+        for student_json in student_list_json:
+            max_student_id += 1
+            student_json['student_id'] = max_student_id
+
+        new_students = full_student_list_schema.load(student_list_json, unknown=INCLUDE)
+        added_students_counter = []
+        for student in new_students:
+            student.save_to_db()
+            added_students_counter.append(student.student_id)
+        return {'status': 200,
+                'message': gettext_("student_list_post").format(added_students_counter)}, 200
+
+    @classmethod
     def put(cls):
         """file: api_university/Swagger/StudentList/put.yml"""
         student_list_json = request.get_json()
@@ -96,24 +115,6 @@ class StudentList(Resource):
                                                                   nonexistent_students,
                                                                   full_student_list_schema,
                                                                   student_list_json)
-
-    @classmethod
-    def post(cls):
-        """file: api_university/Swagger/StudentList/post.yml"""
-        max_student_id, = StudentModel.get_max_student_id()
-        student_list_json = request.get_json()
-
-        for student_json in student_list_json:
-            max_student_id += 1
-            student_json['student_id'] = max_student_id
-
-        new_students = full_student_list_schema.load(student_list_json, unknown=INCLUDE)
-        added_students_counter = []
-        for student in new_students:
-            student.save_to_db()
-            added_students_counter.append(student.student_id)
-        return {'status': 201,
-                'message': f"students '{added_students_counter}' were successfully added"}, 201
 
     @classmethod
     def delete(cls):

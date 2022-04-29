@@ -5,6 +5,7 @@ from marshmallow import INCLUDE
 from api_university.models.group import GroupModel
 from api_university.schemas.group import GroupSchema
 from api_university.sqlalchemy_queries.queries import ComplexQuery
+from api_university.responses.response_strings import gettext_
 
 
 short_group_schema = GroupSchema(only=('group_id', 'name',))
@@ -32,7 +33,7 @@ class Group(Resource):
         group_json['group_id'] = group_id
         new_group = full_group_schema.load(group_json, unknown=INCLUDE)
         new_group.save_to_db()
-        return {'status': 201, 'message': f"group '{group_id}' was successfully created"}, 201
+        return {'status': 200, 'message': gettext_("group_post").format(group_id)}, 200
 
     @classmethod
     def put(cls, group_id):
@@ -42,14 +43,14 @@ class Group(Resource):
         updated_group = full_group_schema.load(group_json, partial=True, unknown=INCLUDE)
         print(updated_group.__dict__)
         updated_group.save_to_db()
-        return {'status': 201, 'message': f"group '{group_id}' was successfully updated"}, 201
+        return {'status': 200, 'message': gettext_("group_put").format(group_id)}, 200
     
     @classmethod
     def delete(cls, group_id):
         """file: api_university/Swagger/Group/delete.yml"""
         group = GroupModel.find_by_id_or_404(group_id)
         group.delete_from_db()
-        return {'status': 200, 'message': f"group '{group_id}' was successfully deleted"}, 200
+        return {'status': 200, 'message': gettext_("group_delete").format(group_id)}, 200
 
 
 class GroupList(Resource):
