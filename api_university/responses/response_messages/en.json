@@ -16,9 +16,18 @@
   "student_delete": "student id={} was successfully deleted",
   "student_not_found": "student id={} not found",
   "student_exists": "student id={} already exists",
+  "student_err_put_course": "only 'add_courses' and 'delete_courses' fields are available in the 'PUT' method, but was given 'courses' field",
+
 
   "student_list_post": "student ids={} were successfully added",
   "student_list_put": "student ids={} were successfully updated",
   "student_list_delete": "students ids={} were successfully deleted",
-  "student_list_not_found": "student ids={} not found"
+  "student_list_not_found": "student ids={} not found",
+  "student_list_delete_err_missing": "missing the field 'student_id_list'",
+  "student_list_delete_err_no_one": "no one student has been deleted",
+
+
+  "input_empty_data_err": "input data cannot be empty"
+
+
 }
