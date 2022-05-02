@@ -1,5 +1,5 @@
 from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, abort
 from marshmallow import INCLUDE
 
 from api_university.models.student import StudentModel
@@ -9,6 +9,7 @@ from api_university.schemas.student import ShortStudentSchema, FullStudentSchema
 from api_university.sqlalchemy_queries.queries import ComplexQuery
 from api_university.resources.utils import StudentListResponse
 from api_university.responses.response_strings import gettext_
+from api_university.handlers import make_error
 
 short_student_schema = ShortStudentSchema()
 full_student_schema = FullStudentSchema()
@@ -83,7 +84,7 @@ class StudentList(Resource):
     @classmethod
     def post(cls):
         """file: api_university/Swagger/StudentList/post.yml"""
-        max_student_id, = StudentModel.get_max_student_id()
+        max_student_id = StudentModel.get_max_student_id()
         student_list_json = request.get_json()
 
         for student_json in student_list_json:
@@ -95,6 +96,7 @@ class StudentList(Resource):
         for student in new_students:
             student.save_to_db()
             added_students_counter.append(student.student_id)
+
         return {'status': 200,
                 'message': gettext_("student_list_post").format(added_students_counter)}, 200
 
@@ -102,33 +104,34 @@ class StudentList(Resource):
     def put(cls):
         """file: api_university/Swagger/StudentList/put.yml"""
         student_list_json = request.get_json()
-        updated_students = []
-        nonexistent_students = []
-        for student_json in student_list_json:
-            student_id = student_json.get('student_id')
-            student = StudentModel.find_by_id(student_id)
-            if student:
-                updated_students.append(student_id)
-            else:
-                nonexistent_students.append(student_id)
-        return StudentListResponse.create_response_for_put_method(updated_students,
-                                                                  nonexistent_students,
-                                                                  full_student_list_schema,
-                                                                  student_list_json)
+        updated_students = full_student_list_schema.load(student_list_json, partial=True, unknown=INCLUDE)
+        updated_students_counter = []
+        for student in updated_students:
+            student.save_to_db()
+            updated_students_counter.append(student.student_id)
+
+        return {'status': 200,
+                'message': gettext_("student_list_put").format(updated_students_counter)}, 200
 
     @classmethod
     def delete(cls):
         """file: api_university/Swagger/StudentList/post.yml"""
-        deletion_students_json = request.get_json()
-        student_id_list = deletion_students_json.get('student_id_list')
-        if student_id_list:
-            nonexistent_students = []
-            deleted_students = []
-            for student_id in student_id_list:
+        student_list_json = request.get_json()
+        student_id_list = student_list_json.get('student_id_list')
+        if not student_id_list:
+            response = {'status': 400,
+                        'message': gettext_("student_list_delete_err_missing")}, 400
+        else:
+            deleted_students_counter = []
+            for student_id in student_list_json.get('student_id_list'):
                 student = StudentModel.find_by_id(student_id)
-                if not student:
-                    nonexistent_students.append(student_id)
-                else:
+                if student:
                     student.delete_from_db()
-                    deleted_students.append(student_id)
-            return StudentListResponse.create_response_for_delete_method(deleted_students, nonexistent_students)
+                    deleted_students_counter.append(student.student_id)
+            if deleted_students_counter:
+                response = {'status': 200,
+                            'message': gettext_("student_list_delete").format(deleted_students_counter)}, 200
+            else:
+                response = {'status': 400,
+                            'message': gettext_("student_list_delete_err_no_one").format(deleted_students_counter)}, 400
+        return response

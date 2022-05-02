@@ -14,6 +14,7 @@ from api_university.data.data_insertion_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
 from api_university.resources.course import Course, CourseList
 from api_university.resources.group import Group, GroupList
+from api_university.handlers import make_error
 
 
 def create_app(test_config=False, dev_config=False):
@@ -34,7 +35,9 @@ def create_app(test_config=False, dev_config=False):
         template_file=os.path.join('Swagger', 'template.yml'),
         parse=True
     )
-    if not test_config:
+    if test_config:
+        pass
+    else:
         # create db if not exists
         @application.before_first_request
         def create_tables():
@@ -49,18 +52,28 @@ def create_app(test_config=False, dev_config=False):
     # Handlers
     @application.errorhandler(ValidationError)
     def handle_marshmallow_validation(err):
-        print('Got ValidationError =', err)
-        return jsonify(err.messages), 400
+        status = 400
+        err_name = "ValidationError"
+        message = err.messages.get(0)
+        print('Got ValidationError =', message)
+        return make_error(status, message, err_name)
 
     @application.errorhandler(IntegrityError)
     def handle_sqlalchemy_errors(err):
+        status = 400
+        err_name = "IntegrityError"
+        message = err.orig.args[0]
         print('Got IntegrityError =', err)
-        return jsonify(err.orig.diag.message_detail), 400
+        db.session.rollback()
+        return make_error(status, message, err_name)
 
-    # @application.errorhandler(AttributeError)
-    # def handle_attribute_errors(err):
-    #     print('Got AttributeError =', err)
-    #     return jsonify(err.args), 400
+    @application.errorhandler(AttributeError)
+    def handle_attribute_errors(err):
+        status = 400
+        err_name = "AttributeError"
+        message = err.messages
+        print('Got AttributeError =', err)
+        return make_error(status, message, err_name)
 
     # RESOURCES:
     # Student

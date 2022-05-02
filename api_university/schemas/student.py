@@ -1,8 +1,10 @@
-from marshmallow import Schema, fields, validate, pre_load, post_load
+from marshmallow import validate, pre_load
 from flask import request, abort
 
 from api_university.db.db_sqlalchemy import db
 from api_university.ma import ma
+from api_university.handlers import make_error
+from api_university.responses.response_strings import gettext_
 from api_university.models.student import StudentModel
 from api_university.models.course import CourseModel
 from .group import GroupSchema
@@ -50,9 +52,9 @@ class FullStudentSchema(ma.SQLAlchemyAutoSchema):
 
             if request.method == 'PUT':
                 if data.get('courses'):
-                    abort(400, description="only 'add_courses' and 'delete_courses'"
-                                           " fields are available in the 'PUT' method,"
-                                           " but was given 'courses' field")
+                    message = gettext_("student_err_put_course")
+                    status = 400
+                    abort(make_error(status, message))
 
                 student = StudentModel.find_by_id_or_404(data.get('student_id'))
 
