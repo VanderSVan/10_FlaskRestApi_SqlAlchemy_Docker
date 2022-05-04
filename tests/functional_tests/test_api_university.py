@@ -1,25 +1,12 @@
 import pytest
-import json
 
 from api_university.config import Configuration as Config
 from api_university.models.student import StudentModel
 from api_university.models.course import CourseModel
 from api_university.models.group import GroupModel
-# from api_university.schemas.student import (ShortStudentSchema,
-#                                             FullStudentSchema)
-# from api_university.schemas.course import CourseSchema
 from api_university.responses.response_strings import gettext_
-# from tests.test_data.data import student_list
 
 api_url = Config.API_URL
-
-# test_short_student_schema = ShortStudentSchema()
-# test_short_student_list_schema = ShortStudentSchema(many=True)
-#
-# test_full_student_schema = FullStudentSchema()
-# test_full_student_list_schema = FullStudentSchema(many=True)
-#
-# full_course_list_schema = CourseSchema(many=True)
 
 student_resources = {
     'student': "{}/students/{}",
@@ -119,49 +106,6 @@ class TestGetStudentList:
             assert isinstance(student['last_name'], str) is True
             assert isinstance(student['group'], (dict, type(None))) is True
             assert isinstance(student['courses'], list) is True
-
-
-# @pytest.mark.parametrize("group, course, result", [
-#     (None, None, student_list),
-#     (2, None, [student_list[0], student_list[2], student_list[6]]),
-#     (None, 2, [student_list[1], student_list[3], student_list[5],
-#                student_list[8], student_list[9]]),
-#     (3, 3, [student_list[7], student_list[9]])
-# ])
-# class TestGetStudentList:
-#     # default (short schema)
-#     def test_get_default_students_schema(self, group, course, result, client):
-#         if group:
-#             query_string = f"?group={group}"
-#         elif course:
-#             query_string = f"?course={course}"
-#         elif group and course:
-#             query_string = f"?group={group}&course={course}"
-#         else:
-#             query_string = "?"
-#         response = client.get(f'{api_url}/students{query_string}')
-#         output_json = json.loads(response.data)
-#         assert response.status_code == 200
-#         assert 'application/json' in response.headers['Content-Type']
-#         assert len(output_json) == len(result)
-#         assert output_json == test_short_student_list_schema.dump(result)
-#
-#     # full schema
-#     def test_get_full_schema(self, group, course, result, client):
-#         if group:
-#             query_string = f"?full=true&group={group}"
-#         elif course:
-#             query_string = f"?full=true&course={course}"
-#         elif group and course:
-#             query_string = f"?full=true&group={group}&course={course}"
-#         else:
-#             query_string = "?full=true&"
-#         response = client.get(f'{api_url}/students{query_string}')
-#         output_json = json.loads(response.data)
-#         assert response.status_code == 200
-#         assert 'application/json' in response.headers['Content-Type']
-#         assert len(output_json) == len(result)
-#         assert output_json == test_full_student_list_schema.dump(result)
 
 
 @pytest.mark.parametrize("wrong_data, status", [
