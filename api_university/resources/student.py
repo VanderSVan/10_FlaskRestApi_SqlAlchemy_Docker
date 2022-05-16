@@ -1,7 +1,9 @@
 from flask import request
 from flask_restful import Resource, abort
+from flasgger import swag_from
 from marshmallow import INCLUDE
 
+from api_university.config import swag_dir
 from api_university.models.student import StudentModel
 from api_university.models.course import CourseModel
 from api_university.models.group import GroupModel
@@ -20,8 +22,8 @@ full_student_list_schema = FullStudentSchema(many=True)
 
 class Student(Resource):
     @classmethod
+    @swag_from(f"{swag_dir}/Student/get.yml")
     def get(cls, student_id):
-        """file: api_university/Swagger/Student/delete.yml"""
         student = StudentModel.find_by_id_or_404(student_id)
         if request.args.get('full', 'false').lower() == 'true':
             response = full_student_schema.dump(student), 200
@@ -30,8 +32,8 @@ class Student(Resource):
         return response
 
     @classmethod
+    @swag_from(f"{swag_dir}/Student/post.yml")
     def post(cls, student_id):
-        """file: api_university/Swagger/Student/put.yml"""
         student_json = request.get_json()
         student_json['student_id'] = student_id
         new_student = full_student_schema.load(student_json, unknown=INCLUDE)
@@ -39,8 +41,8 @@ class Student(Resource):
         return {'status': 200, 'message': gettext_("student_post").format(student_id)}, 200
 
     @classmethod
+    @swag_from(f"{swag_dir}/Student/put.yml")
     def put(cls, student_id):
-        """file: api_university/Swagger/Student/put.yml"""
         StudentModel.find_by_id_or_404(student_id)
         student_json = request.get_json()
         student_json['student_id'] = student_id
@@ -49,8 +51,8 @@ class Student(Resource):
         return {'status': 200, 'message': gettext_("student_put").format(student_id)}, 200
 
     @classmethod
+    @swag_from(f"{swag_dir}/Student/delete.yml")
     def delete(cls, student_id):
-        """file: api_university/Swagger/StudentList/post.yml"""
         student = StudentModel.find_by_id_or_404(student_id)
         student.delete_from_db()
         return {'status': 200, 'message': gettext_("student_delete").format(student_id)}, 200
@@ -58,8 +60,8 @@ class Student(Resource):
 
 class StudentList(Resource):
     @classmethod
+    @swag_from(f"{swag_dir}/StudentList/get.yml")
     def get(cls):
-        """file: api_university/Swagger/StudentList/get.yml"""
         group_id = request.args.get('group')
         course_id = request.args.get('course')
 
@@ -82,8 +84,8 @@ class StudentList(Resource):
         return response
 
     @classmethod
+    @swag_from(f"{swag_dir}/StudentList/post.yml")
     def post(cls):
-        """file: api_university/Swagger/StudentList/post.yml"""
         max_student_id = StudentModel.get_max_student_id()
         student_list_json = request.get_json()
 
@@ -101,8 +103,8 @@ class StudentList(Resource):
                 'message': gettext_("student_list_post").format(added_students_counter)}, 200
 
     @classmethod
+    @swag_from(f"{swag_dir}/StudentList/put.yml")
     def put(cls):
-        """file: api_university/Swagger/StudentList/put.yml"""
         student_list_json = request.get_json()
         updated_students = full_student_list_schema.load(student_list_json, partial=True, unknown=INCLUDE)
         updated_students_counter = []
@@ -114,8 +116,8 @@ class StudentList(Resource):
                 'message': gettext_("student_list_put").format(updated_students_counter)}, 200
 
     @classmethod
+    @swag_from(f"{swag_dir}/StudentList/delete.yml")
     def delete(cls):
-        """file: api_university/Swagger/StudentList/post.yml"""
         student_list_json = request.get_json()
         student_id_list = student_list_json.get('student_id_list')
         if not student_id_list:

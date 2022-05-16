@@ -1,5 +1,6 @@
 import os
 api_dir = os.path.abspath(os.path.dirname(__file__))
+swag_dir = os.path.join(api_dir, 'Swagger')
 project_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
