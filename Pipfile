@@ -14,10 +14,9 @@ flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flasgger = "*"
 marshmallow = "*"
-pytest = "*"
-requests = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.10"
