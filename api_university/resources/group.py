@@ -6,7 +6,7 @@ from marshmallow import INCLUDE
 from api_university.config import swag_dir
 from api_university.models.group import GroupModel
 from api_university.schemas.group import GroupSchema
-from api_university.sqlalchemy_queries.queries import ComplexQuery
+from api_university.db.sqlalchemy_queries.queries import ComplexQuery
 from api_university.responses.response_strings import gettext_
 
 
