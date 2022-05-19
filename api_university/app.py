@@ -1,5 +1,6 @@
 import os
-from flask import Flask, jsonify
+from flask import Flask
+from flask_migrate import Migrate
 from flask_restful import Api
 from flasgger import Swagger
 from marshmallow import ValidationError
@@ -7,14 +8,17 @@ from sqlalchemy.exc import IntegrityError
 
 from api_university.db.db_sqlalchemy import db
 from api_university.ma import ma
-from api_university.config import (Configuration,
-                                   DevelopmentConfiguration,
-                                   TestingConfiguration)
+from api_university.config import \
+    (Configuration,
+     DevelopmentConfiguration,
+     TestingConfiguration)
 from api_university.data.data_insertion_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
 from api_university.resources.course import Course, CourseList
 from api_university.resources.group import Group, GroupList
 from api_university.handlers import make_error
+
+migrate = Migrate()
 
 
 def create_app(test_config=False, dev_config=False):
@@ -35,9 +39,7 @@ def create_app(test_config=False, dev_config=False):
         template_file=os.path.join('Swagger', 'template.yml'),
         parse=True
     )
-    if test_config:
-        pass
-    else:
+    if not test_config:
         # create db if not exists
         @application.before_first_request
         def create_tables():
@@ -87,11 +89,13 @@ def create_app(test_config=False, dev_config=False):
     # Groups
     api.add_resource(GroupList, f"{api_url}/groups")
     api.add_resource(Group, f"{api_url}/groups/<int:group_id>")
+
+    db.init_app(application)
+    ma.init_app(application)
+    migrate.init_app(application, db)
     return application
 
 
 if __name__ == '__main__':
     app = create_app(dev_config=True)
-    db.init_app(app)
-    ma.init_app(app)
-    app.run()
+    app.run(host='0.0.0.0')
