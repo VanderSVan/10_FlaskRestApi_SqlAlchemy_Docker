@@ -17,13 +17,13 @@ class PsqlDatabaseConnection:
                                   password=self.password,
                                   host=self.host,
                                   port=self.port)
-        print("PostgreSQL connection open.")
+        print("[ PostgreSQL connection open.")
         self.connection.set_isolation_level(self.isolation_level)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.close()
-        print("PostgreSQL connection close.")
+        print("PostgreSQL connection close. ]")
 
 
 def _get_pure_notices(notices: list) -> str:

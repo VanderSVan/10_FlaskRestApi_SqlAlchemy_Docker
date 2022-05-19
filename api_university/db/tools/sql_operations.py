@@ -1,3 +1,5 @@
+# Wrappers for sql operations
+
 from psycopg2.sql import SQL
 
 
