@@ -1,5 +1,5 @@
 from flask import request
-from flask_restful import Resource, abort
+from flask_restful import Resource
 from flasgger import swag_from
 from marshmallow import INCLUDE
 
@@ -8,10 +8,8 @@ from api_university.models.student import StudentModel
 from api_university.models.course import CourseModel
 from api_university.models.group import GroupModel
 from api_university.schemas.student import ShortStudentSchema, FullStudentSchema
-from api_university.sqlalchemy_queries.queries import ComplexQuery
-from api_university.resources.utils import StudentListResponse
+from api_university.db.sqlalchemy_queries.queries import ComplexQuery
 from api_university.responses.response_strings import gettext_
-from api_university.handlers import make_error
 
 short_student_schema = ShortStudentSchema()
 full_student_schema = FullStudentSchema()
