@@ -2,11 +2,11 @@ from psycopg2 import DatabaseError
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 from api_university.config import Configuration
-from api_university.db.utils import PsqlDatabaseConnection
-from api_university.db.db_operations import (Database,
-                                             DatabaseRole,
-                                             DatabaseUser,
-                                             DatabasePrivilege)
+from api_university.db.tools.utils import PsqlDatabaseConnection
+from api_university.db.tools.db_tools import (Database,
+                                              DatabaseRole,
+                                              DatabaseUser,
+                                              DatabasePrivilege)
 
 db_config = Configuration.DATABASE
 
