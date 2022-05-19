@@ -11,6 +11,7 @@ class Configuration:
         'user_password': '1111',
         'db_name': 'university'
     }
+    MIGRATION_DIR = os.path.join(api_dir, 'db', 'migrations')
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
