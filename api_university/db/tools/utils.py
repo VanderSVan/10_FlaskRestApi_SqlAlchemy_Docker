@@ -1,29 +1,60 @@
-from psycopg2 import connect
+import sys
+
+from psycopg2 import connect, OperationalError
+from psycopg2.extensions import connection as psycopg2_conn, ISOLATION_LEVEL_AUTOCOMMIT
 from dataclasses import dataclass
 
 
 @dataclass
 class PsqlDatabaseConnection:
-    dbname: str
-    user: str
-    password: str
-    host: str
-    port: str
-    isolation_level: int
+    """Connection through superuser by default"""
+    dbname: str = 'postgres'
+    user: str = 'postgres'
+    password: str = 'postgres'
+    host: str = "127.0.0.1"
+    port: str = '5432'
+    isolation_level: int = ISOLATION_LEVEL_AUTOCOMMIT
+
+    @staticmethod
+    def print_psycopg2_exception(err):
+        # get details about the exception
+        err_type, err_obj, traceback = sys.exc_info()
+
+        # get the line number when exception occured
+        line_num = traceback.tb_lineno
+        print("===psycopg2 exception in more detail===")
+        # print the connect() error
+        print("\npsycopg2 ERROR:", err, "on line number:", line_num)
+        print("psycopg2 traceback:", traceback, "-- type:", err_type)
+
+        # psycopg2 extensions.Diagnostics object attribute
+        print("\nextensions.Diagnostics:", err.diag)
+        print('obj=', err_obj.args)
+
+        # print the pgcode and pgerror exceptions
+        print("pgerror:", err.pgerror)
+        print("pgcode:", err.pgcode)
+        print("===end psycopg2 exception===\n")
 
     def __enter__(self):
-        self.connection = connect(dbname=self.dbname,
-                                  user=self.user,
-                                  password=self.password,
-                                  host=self.host,
-                                  port=self.port)
-        print("[ PostgreSQL connection open.")
+        try:
+            self.connection = connect(
+                dbname=self.dbname,
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port)
+        except OperationalError as err:
+            print("Error: Unable to connect!\nInput connection data is probably wrong.\n")
+            self.print_psycopg2_exception(err)
+
         self.connection.set_isolation_level(self.isolation_level)
+        print("[Postgres connection open:")
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.close()
-        print("PostgreSQL connection close. ]")
+        print("Postgres connection close.]")
 
 
 def _get_pure_notices(notices: list) -> str:
@@ -60,10 +91,11 @@ def try_except_decorator(error):
                 print_sql_error(err)
             except Exception as default_err:
                 print(f"Got an exception: {default_err}")
+                print('Type exception =', type(default_err))
             finally:
-                print_notices(self.connection.notices)
+                if isinstance(self.connection, psycopg2_conn):
+                    print_notices(self.connection.notices)
 
         return inner_wrapper
 
     return outer_wrapper
-
