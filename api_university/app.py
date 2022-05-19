@@ -8,10 +8,11 @@ from sqlalchemy.exc import IntegrityError
 
 from api_university.db.db_sqlalchemy import db
 from api_university.ma import ma
-from api_university.config import \
-    (Configuration,
-     DevelopmentConfiguration,
-     TestingConfiguration)
+from api_university.config import (
+    Configuration,
+    DevelopmentConfiguration,
+    TestingConfiguration
+)
 from api_university.data.insertion_data_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
 from api_university.resources.course import Course, CourseList
@@ -92,7 +93,7 @@ def create_app(test_config=False, dev_config=False):
 
     db.init_app(application)
     ma.init_app(application)
-    migrate.init_app(application, db)
+    migrate.init_app(application, db, directory=Configuration.MIGRATION_DIR)
     return application
 
 
