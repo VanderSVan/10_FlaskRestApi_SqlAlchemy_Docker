@@ -11,7 +11,7 @@ class PsqlDatabaseConnection:
     dbname: str = 'postgres'
     user: str = 'postgres'
     password: str = 'postgres'
-    host: str = "127.0.0.1"
+    host: str = 'localhost'
     port: str = '5432'
     isolation_level: int = ISOLATION_LEVEL_AUTOCOMMIT
 

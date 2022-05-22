@@ -5,29 +5,39 @@ project_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 class Configuration:
+    API_URL = "/api/v1"
+    RESOURCES = {
+        'students': f"{API_URL}/students",
+        'student_id': f"{API_URL}/students/<int:student_id>",
+
+        'courses': f"{API_URL}/courses",
+        'course_id': f"{API_URL}/courses/<int:course_id>",
+
+        'groups': f"{API_URL}/groups",
+        'group_id': f"{API_URL}/groups/<int:group_id>"
+
+    }
     DATABASE = {
         'role_name': 'admins',
         'user_name': 'admin',
         'user_password': '1111',
         'db_name': 'university'
     }
-    MIGRATION_DIR = os.path.join(api_dir, 'db', 'migrations')
-    DEBUG = False
-    TESTING = False
-    CSRF_ENABLED = True
-    SECRET_KEY = 'this-really-needs-to-be-changed'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = (f"postgresql+psycopg2://"
                                f"{DATABASE['user_name']}:"
                                f"{DATABASE['user_password']}@"
                                f"localhost:5432/"
                                f"{DATABASE['db_name']}")
-    # JSON_SORT_KEYS = False
-    API_URL = "/api/v1"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MIGRATION_DIR = os.path.join(api_dir, 'db', 'migrations')
     SWAGGER = {
         'doc_dir': f'{api_dir}/Swagger',
         "specs_route": API_URL
     }
+    DEBUG = False
+    TESTING = False
+    CSRF_ENABLED = True
+    SECRET_KEY = 'this-really-needs-to-be-changed'
 
 
 class DevelopmentConfiguration(Configuration):
@@ -36,33 +46,11 @@ class DevelopmentConfiguration(Configuration):
 
 
 class TestingConfiguration(Configuration):
-    # test_db_path = os.path.dirname(os.path.dirname(__file__))
     DATABASE = {
         'test_db_name': 'test_university.db'
     }
-    # DATABASE = {
-    #     'role_name': 'test_admins',
-    #     'user_name': 'test_admin',
-    #     'user_password': '1111',
-    #     'db_name': 'test_university'
-    # }
     ENV = 'test'
     TESTING = True
     TESTDB_PATH = project_dir + f"/tests/{DATABASE['test_db_name']}"
     TEST_DATABASE_URI = 'sqlite:///' + TESTDB_PATH
     SQLALCHEMY_DATABASE_URI = TEST_DATABASE_URI
-    # SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    # SQLALCHEMY_DATABASE_URI = "sqlite:///tests.db"
-    # SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.dirname(os.path.dirname(__file__))
-    # SQLALCHEMY_DATABASE_URI = (f"postgresql+psycopg2://"
-    #                            f"{DATABASE['user_name']}:"
-    #                            f"{DATABASE['user_password']}@"
-    #                            f"localhost:5432/"
-    #                            f"{DATABASE['db_name']}")
-
-
-
-
-
-
-    # SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://postgres:12345@localhost:5432/test_db"
