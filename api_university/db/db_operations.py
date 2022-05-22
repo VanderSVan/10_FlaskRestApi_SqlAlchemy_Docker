@@ -104,7 +104,7 @@ if __name__ == '__main__':
                                  dbname=db_config['db_name'],
                                  user_name=db_config['user_name'],
                                  user_password=db_config['user_password'],
-                                 role_name=db_config['role_name'])
+                                 role_name=db_config.get('role_name'))
     # db operations:
     database.create_db()
     # database.delete_db()
