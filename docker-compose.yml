@@ -4,8 +4,10 @@ services:
   postgresql_db:
     restart: always
     image: postgres
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
     ports:
-      - '5433:5432'
+      - '5432:5432'
     networks:
       - rest_api_university
   api:
@@ -14,6 +16,11 @@ services:
       dockerfile: ./Dockerfile
     restart: always
     container_name: api
+    command: bash -c "
+      export FLASK_APP=api_university/app.py
+      && python3 -m flask run --host=0.0.0.0"
+    volumes:
+      - myapp:/usr/src/app
     ports:
       - '5000:5000'
     depends_on:
@@ -24,3 +31,6 @@ services:
 networks:
   rest_api_university:
     driver: bridge
+
+volumes:
+  myapp:
