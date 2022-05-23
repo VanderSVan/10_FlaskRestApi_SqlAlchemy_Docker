@@ -5,6 +5,7 @@ from flask_restful import Api
 from flasgger import Swagger
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
+from dotenv import load_dotenv
 
 from api_university.db.db_sqlalchemy import db
 from api_university.ma import ma
@@ -13,6 +14,8 @@ from api_university.config import (
     DevelopmentConfiguration,
     TestingConfiguration
 )
+from api_university.db.tools.utils import PsqlDatabaseConnection
+from api_university.db.db_operations import DatabaseOperation
 from api_university.data.insertion_data_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
 from api_university.resources.course import Course, CourseList
@@ -21,6 +24,7 @@ from api_university.handlers import make_error
 
 migrate = Migrate()
 resources = Configuration.RESOURCES
+load_dotenv()
 
 
 def create_app(test_config=False, dev_config=False):
@@ -44,6 +48,18 @@ def create_app(test_config=False, dev_config=False):
         # create db if not exists
         @application.before_first_request
         def create_tables():
+            # init connection
+            connection = PsqlDatabaseConnection()
+
+            # init database params
+            database = DatabaseOperation(connection=connection,
+                                         dbname=os.getenv("PG_DB"),
+                                         user_name=os.getenv("PG_USER"),
+                                         user_password=os.getenv("PG_USER_PASSWORD"),
+                                         role_name=os.getenv("PG_ROLE"))
+            # db operations:
+            database.create_db()
+
             db.create_all()
             insert_data_to_db(db,
                               group_count=10,
