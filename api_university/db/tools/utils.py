@@ -12,11 +12,11 @@ load_dotenv()
 @dataclass
 class PsqlDatabaseConnection:
     """Connection through superuser"""
-    dbname: str = os.getenv("PG_SUPERUSER_DB")
-    user: str = os.getenv("PG_SUPERUSER")
-    password: str = os.getenv("PG_SUPERUSER_PASSWORD")
-    host: str = os.getenv("POSTGRES_HOST")
-    port: str = os.getenv("POSTGRES_PORT")
+    dbname: str = os.getenv("POSTGRES_DB")
+    user: str = os.getenv("POSTGRES_USER")
+    password: str = os.getenv("POSTGRES_PASSWORD")
+    host: str = os.getenv("PG_HOST")
+    port: str = os.getenv("PG_PORT")
     isolation_level: int = ISOLATION_LEVEL_AUTOCOMMIT
 
     @staticmethod

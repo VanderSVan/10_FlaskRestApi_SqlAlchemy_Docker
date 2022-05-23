@@ -115,4 +115,4 @@ def create_app(test_config=False, dev_config=False):
 
 if __name__ == '__main__':
     app = create_app(dev_config=True)
-    app.run(host='localhost')
+    app.run(host="0.0.0.0")
