@@ -38,7 +38,3 @@ COPY . /usr/src/app
 
 # add dependencies path to env
 ENV PYTHONPATH=${PYTHONPATH}:"/usr/src/app/dependencies"
-
-# start app
-ENTRYPOINT [ "python3" ]
-CMD ["api_university/app.py"]
