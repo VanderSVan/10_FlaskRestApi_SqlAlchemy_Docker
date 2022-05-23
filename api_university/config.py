@@ -17,17 +17,11 @@ class Configuration:
         'group_id': f"{API_URL}/groups/<int:group_id>"
 
     }
-    DATABASE = {
-        'role_name': 'admins',
-        'user_name': 'admin',
-        'user_password': '1111',
-        'db_name': 'university'
-    }
     SQLALCHEMY_DATABASE_URI = (f"postgresql+psycopg2://"
-                               f"{DATABASE['user_name']}:"
-                               f"{DATABASE['user_password']}@"
-                               f"localhost:5432/"
-                               f"{DATABASE['db_name']}")
+                               f"{os.getenv('PG_USER')}:"
+                               f"{os.getenv('PG_USER_PASSWORD')}@"
+                               f"{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/"
+                               f"{os.getenv('PG_DB')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MIGRATION_DIR = os.path.join(api_dir, 'db', 'migrations')
     SWAGGER = {

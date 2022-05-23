@@ -1,7 +1,9 @@
+import os
 from dataclasses import dataclass
 from psycopg2 import DatabaseError
 
-from api_university.config import Configuration
+
+# from api_university.config import Configuration
 from api_university.db.tools.utils import (
     PsqlDatabaseConnection,
     try_except_decorator
@@ -13,7 +15,7 @@ from api_university.db.tools.db_tools import (
     DatabasePrivilege
 )
 
-db_config = Configuration.DATABASE
+# db_config = Configuration.DATABASE
 
 
 @dataclass()
@@ -101,10 +103,10 @@ if __name__ == '__main__':
 
     # init database params
     database = DatabaseOperation(connection=conn,
-                                 dbname=db_config['db_name'],
-                                 user_name=db_config['user_name'],
-                                 user_password=db_config['user_password'],
-                                 role_name=db_config['role_name'])
+                                 dbname=os.getenv("PG_DB"),
+                                 user_name=os.getenv("PG_USER"),
+                                 user_password=os.getenv("PG_USER_PASSWORD"),
+                                 role_name=os.getenv("PG_ROLE"))
     # db operations:
-    database.create_db()
-    # database.delete_db()
+    # database.create_db()
+    database.delete_db()

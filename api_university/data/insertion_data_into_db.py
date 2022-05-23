@@ -50,6 +50,7 @@ def insert_data_to_db(db: initialized_db,
 
         # CLOSE TRANSACTION.
         db.session.commit()
+        print("Data has been added to db")
 
     else:
-        print(f"Database {db} not empty")
+        print(f"Database already has data")
