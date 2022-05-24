@@ -1,16 +1,24 @@
+# Virtual Environment
 venv/
+# Pycharm
 .idea/
+# Pytest
 __pycache__/
 .pytest_cache/
+# Coverage packege
 htmlcov/
 .coverage
+# Building python package
 instance/
 dist/
 build/
 *.egg-info/
-gg.py
+# For tests
 test_university.db
-.gitignore
+# Docker building
 docker-compose.yml
 Dockerfile
+# Other
+gg.py
+.gitignore
 README.md
