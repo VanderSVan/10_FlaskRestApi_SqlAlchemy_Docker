@@ -1,7 +1,8 @@
+import os
 from dataclasses import dataclass
 from psycopg2 import DatabaseError
+from dotenv import load_dotenv
 
-from api_university.config import Configuration
 from api_university.db.tools.utils import (
     PsqlDatabaseConnection,
     try_except_decorator
@@ -13,23 +14,22 @@ from api_university.db.tools.db_tools import (
     DatabasePrivilege
 )
 
-db_config = Configuration.DATABASE
+load_dotenv()
 
 
 @dataclass()
 class DatabaseOperation:
-    connection: PsqlDatabaseConnection
-    dbname: str
-    user_name: str
-    user_password: str
-    role_name: str = None
+    connection = PsqlDatabaseConnection()
+    dbname: str = os.getenv("PG_DB")
+    user_name: str = os.getenv("PG_USER")
+    user_password: str = os.getenv("PG_USER_PASSWORD")
+    role_name: str = os.getenv("PG_ROLE")
 
     @try_except_decorator(DatabaseError)
     def create_db(self):
         """
-        Default: Create db and user with password.
-
-        It is also possible to create a role.
+        Default: Creates db, role and user with password.
+        Gets data from .env.
         """
         with self.connection as db:
             # Create new database:
@@ -96,15 +96,9 @@ class DatabaseOperation:
 
 
 if __name__ == '__main__':
-    # init connection
-    conn = PsqlDatabaseConnection()
-
     # init database params
-    database = DatabaseOperation(connection=conn,
-                                 dbname=db_config['db_name'],
-                                 user_name=db_config['user_name'],
-                                 user_password=db_config['user_password'],
-                                 role_name=db_config.get('role_name'))
+    database = DatabaseOperation()
+
     # db operations:
     database.create_db()
     # database.delete_db()

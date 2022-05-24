@@ -14,7 +14,7 @@ from api_university.data.data_preparation import (generate_group_instances,
 def insert_data_to_db(db: initialized_db,
                       group_count: int,
                       student_count: int,
-                      lower_limit_students_in_group: int,
+                      lower_limit_of_students_in_group: int,
                       upper_limit_of_students_in_group: int) -> None:
     """Inserts prepared data into an empty database only!"""
 
@@ -34,7 +34,7 @@ def insert_data_to_db(db: initialized_db,
 
         # Create dict with available places as value and group_id as key
         group_ids = generate_available_places_in_groups(
-            lower_limit_of_students=lower_limit_students_in_group,
+            lower_limit_of_students=lower_limit_of_students_in_group,
             upper_limit_of_students=upper_limit_of_students_in_group,
             number_of_groups=group_count
         )
@@ -50,6 +50,7 @@ def insert_data_to_db(db: initialized_db,
 
         # CLOSE TRANSACTION.
         db.session.commit()
+        print("Data has been added to db")
 
     else:
-        print(f"Database {db} not empty")
+        print(f"Database already has data")

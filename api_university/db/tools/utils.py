@@ -1,18 +1,22 @@
 import sys
+import os
 
+from dotenv import load_dotenv
 from psycopg2 import connect, OperationalError
 from psycopg2.extensions import connection as psycopg2_conn, ISOLATION_LEVEL_AUTOCOMMIT
 from dataclasses import dataclass
 
+load_dotenv()
+
 
 @dataclass
 class PsqlDatabaseConnection:
-    """Connection through superuser by default"""
-    dbname: str = 'postgres'
-    user: str = 'postgres'
-    password: str = 'postgres'
-    host: str = 'localhost'
-    port: str = '5432'
+    """Connection through superuser"""
+    dbname: str = os.getenv("POSTGRES_DB")
+    user: str = os.getenv("POSTGRES_USER")
+    password: str = os.getenv("POSTGRES_PASSWORD")
+    host: str = os.getenv("PG_HOST")
+    port: str = os.getenv("PG_PORT")
     isolation_level: int = ISOLATION_LEVEL_AUTOCOMMIT
 
     @staticmethod
