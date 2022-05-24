@@ -1,0 +1,16 @@
+venv/
+.idea/
+__pycache__/
+.pytest_cache/
+htmlcov/
+.coverage
+instance/
+dist/
+build/
+*.egg-info/
+gg.py
+test_university.db
+.gitignore
+docker-compose.yml
+Dockerfile
+README.md
