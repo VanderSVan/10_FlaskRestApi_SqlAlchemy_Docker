@@ -1,0 +1,40 @@
+# set args
+ARG PYTHON_VERSION=3.10
+ARG PYTHON_VERSION_SUFFIX=slim-buster
+
+# pull python image from docker hub
+FROM python:${PYTHON_VERSION}-${PYTHON_VERSION_SUFFIX} AS builder
+
+# set env values
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# update pip and install pipenv
+RUN pip install --no-cache-dir --upgrade \
+    pip \
+    pipenv
+
+# create tmp folder
+WORKDIR /usr/src/tmp
+
+# copy pipenv files to tmp folder
+COPY Pipfile.lock /usr/src/tmp/
+
+# convert Pipfile.lock to requirements.txt
+# and install all dependencies by pip
+RUN pipenv requirements > requirements.txt && \
+    pip install --no-cache-dir --target=/usr/src/app/dependencies \
+    -r requirements.txt
+
+FROM python:${PYTHON_VERSION}-${PYTHON_VERSION_SUFFIX}
+
+#create app folder
+WORKDIR /usr/src/app
+
+# copy all dependencies into container
+COPY --from=builder /usr/src/app/ .
+# copy project to app folder
+COPY . /usr/src/app
+
+# add dependencies path to env
+ENV PYTHONPATH=${PYTHONPATH}:"/usr/src/app/dependencies"

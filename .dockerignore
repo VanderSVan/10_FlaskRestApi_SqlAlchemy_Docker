@@ -15,5 +15,10 @@ build/
 *.egg-info/
 # For tests
 test_university.db
+# Docker building
+docker-compose.yml
+Dockerfile
 # Other
 gg.py
+.gitignore
+README.md
