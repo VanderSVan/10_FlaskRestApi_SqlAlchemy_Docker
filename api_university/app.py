@@ -14,7 +14,6 @@ from api_university.config import (
     DevelopmentConfiguration,
     TestingConfiguration
 )
-from api_university.db.tools.utils import PsqlDatabaseConnection
 from api_university.db.db_operations import DatabaseOperation
 from api_university.data.insertion_data_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
@@ -48,19 +47,14 @@ def create_app(test_config=False, dev_config=False):
         # create db if not exists
         @application.before_first_request
         def create_tables():
-            # init connection
-            connection = PsqlDatabaseConnection()
-
-            # init database params
-            database = DatabaseOperation(connection=connection,
-                                         dbname=os.getenv("PG_DB"),
-                                         user_name=os.getenv("PG_USER"),
-                                         user_password=os.getenv("PG_USER_PASSWORD"),
-                                         role_name=os.getenv("PG_ROLE"))
-            # db operations:
+            # create db (gets data from .env)
+            database = DatabaseOperation()
             database.create_db()
 
+            # create tables
             db.create_all()
+
+            # insert prepared data
             insert_data_to_db(db,
                               group_count=10,
                               student_count=200,
@@ -84,14 +78,6 @@ def create_app(test_config=False, dev_config=False):
         message = err.orig.args[0]
         print('Got IntegrityError =', err)
         db.session.rollback()
-        return make_error(status, message, err_name)
-
-    @application.errorhandler(AttributeError)
-    def handle_attribute_errors(err):
-        status = 400
-        err_name = "AttributeError"
-        message = err.messages
-        print('Got AttributeError =', err)
         return make_error(status, message, err_name)
 
     # RESOURCES:
