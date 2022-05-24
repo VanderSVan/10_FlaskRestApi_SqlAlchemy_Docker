@@ -22,7 +22,7 @@ from api_university.resources.group import Group, GroupList
 from api_university.handlers import make_error
 
 migrate = Migrate()
-resources = Configuration.RESOURCES
+api_url = Configuration.API_URL
 load_dotenv()
 
 
@@ -82,16 +82,16 @@ def create_app(test_config=False, dev_config=False):
 
     # RESOURCES:
     # Student
-    api.add_resource(StudentList, resources['students'])
-    api.add_resource(Student, resources['student_id'])
+    api.add_resource(StudentList, f"{api_url}/students")
+    api.add_resource(Student, f"{api_url}/students/<int:student_id>")
 
     # Courses
-    api.add_resource(CourseList, resources['courses'])
-    api.add_resource(Course, resources['course_id'])
+    api.add_resource(CourseList, f"{api_url}/courses")
+    api.add_resource(Course, f"{api_url}/courses/<int:course_id>")
 
     # Groups
-    api.add_resource(GroupList, resources['groups'])
-    api.add_resource(Group, resources['group_id'])
+    api.add_resource(GroupList, f"{api_url}/groups")
+    api.add_resource(Group, f"{api_url}/groups/<int:group_id>")
 
     db.init_app(application)
     ma.init_app(application)
