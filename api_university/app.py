@@ -58,7 +58,7 @@ def create_app(test_config=False, dev_config=False):
             insert_data_to_db(db,
                               group_count=10,
                               student_count=200,
-                              lower_limit_students_in_group=10,
+                              lower_limit_of_students_in_group=10,
                               upper_limit_of_students_in_group=30)
             db.session.commit()
 
