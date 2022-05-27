@@ -17,7 +17,8 @@ class CustomBaseQuery(BaseQuery):
         rv = self.get(ident)
         if rv is None:
             return rv
-
+        if isinstance(description, Response):
+            abort(description)
         return abort(400, description=description)
 
     def get_or_404(self, ident, description=None):

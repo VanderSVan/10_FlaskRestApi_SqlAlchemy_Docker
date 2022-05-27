@@ -48,21 +48,53 @@ def db(app):
 
 
 @pytest.fixture(scope="function", autouse=True)
-def session(db):
-    connection = db.engine.connect()
-    transaction = connection.begin()
+def session(db, app):
+    session_ = db.session
+    session_.begin_nested()
+
+    yield session_
+
+    session_.rollback()
+
+
+
+
+
+
+
+    # connection = db.engine.connect()
+    # transaction = connection.begin()
+    #
     # options = dict(bind=connection, binds={})
     # session_ = db.create_scoped_session(options=options)
     # db.session = session_
-    session_ = db.session
+    # # session_ = db.session
+    # # session_.begin_nested()
+    # db.session.begin_nested()
+    #
+    # # session_.add_all(group_list)
+    # # session_.add_all(course_list)
+    # # session_.add_all(student_list)
+    # # session_.commit()
     # ses = db.session
-
-    yield session_
+    #
+    # # yield session_
     # yield ses
-
-    transaction.rollback()
-    connection.close()
-    session_.remove()
+    #
+    # db.session.close()
+    # # db.get_engine(app).dispose()
+    # transaction.rollback()
+    # connection.invalidate()
+    #
+    #
+    # # # checkpoint.rollback()
+    # # # session_.flush()
+    # # session_.expire_all()
+    # # session_.close()
+    # # # transaction.rollback()
+    # # # connection.close()
+    # # # session_.rollback()
+    # # session_.remove()
 
 # @pytest.fixture(scope='class', autouse=True)
 # def app():

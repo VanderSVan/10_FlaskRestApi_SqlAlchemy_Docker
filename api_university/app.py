@@ -19,7 +19,7 @@ from api_university.data.insertion_data_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
 from api_university.resources.course import Course, CourseList
 from api_university.resources.group import Group, GroupList
-from api_university.handlers import make_error
+from api_university.handlers import make_error, handle_404_error_api
 
 migrate = Migrate()
 api_url = Configuration.API_URL
@@ -67,7 +67,7 @@ def create_app(test_config=False, dev_config=False):
     def handle_marshmallow_validation(err):
         status = 400
         err_name = "ValidationError"
-        message = err.messages.get(0)
+        message = err.messages.get(0) or err.messages or err
         print('Got ValidationError =', message)
         return make_error(status, message, err_name)
 
@@ -75,9 +75,17 @@ def create_app(test_config=False, dev_config=False):
     def handle_sqlalchemy_errors(err):
         status = 400
         err_name = "IntegrityError"
-        message = err.orig.args[0]
+        message = err.orig.args[0] or err
         print('Got IntegrityError =', err)
         db.session.rollback()
+        return make_error(status, message, err_name)
+
+    @application.errorhandler(AttributeError)
+    def handle_attribute_errors(err):
+        status = 400
+        err_name = "AttributeError"
+        message = err.messages or err
+        print('Got AttributeError =', err)
         return make_error(status, message, err_name)
 
     # RESOURCES:
@@ -93,9 +101,14 @@ def create_app(test_config=False, dev_config=False):
     api.add_resource(GroupList, f"{api_url}/groups")
     api.add_resource(Group, f"{api_url}/groups/<int:group_id>")
 
+    # HANDLERS:
+    application.register_error_handler(404, handle_404_error_api)
+
+    # Initialization
     db.init_app(application)
     ma.init_app(application)
     migrate.init_app(application, db, directory=Configuration.MIGRATION_DIR)
+
     return application
 
 

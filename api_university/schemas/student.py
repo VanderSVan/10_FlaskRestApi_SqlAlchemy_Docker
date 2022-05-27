@@ -43,27 +43,27 @@ class FullStudentSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
 
     @pre_load
-    def process_data(self, data, **kwargs):
+    def process_data(self, data: dict, **kwargs):
         if type(data) is dict:
             if request.method == 'POST':
                 StudentModel.not_find_by_id_or_400(data.get('student_id'))
                 if data.get('courses'):
-                    data['courses'] = CourseModel.get_courses_by_ids(data['courses'])
+                    data['courses'] = CourseModel.get_courses_by_ids_or_404(data['courses'])
 
             if request.method == 'PUT':
+                student = StudentModel.find_by_id_or_404(data.get('student_id'))
+
                 if data.get('courses'):
-                    message = gettext_("student_err_put_course")
+                    message = gettext_("student_err_put_courses")
                     status = 400
                     abort(make_error(status, message))
 
-                student = StudentModel.find_by_id_or_404(data.get('student_id'))
-
                 if data.get('add_courses'):
-                    new_courses = CourseModel.get_courses_by_ids(data['add_courses'])
+                    new_courses = CourseModel.get_courses_by_ids_or_404(data['add_courses'])
                     student.courses.extend(new_courses)
 
                 if data.get('delete_courses'):
-                    deletion_courses = CourseModel.get_courses_by_ids(data['delete_courses'])
+                    deletion_courses = CourseModel.get_courses_by_ids_or_404(data['delete_courses'])
                     student_courses_dict = dict.fromkeys(student.courses, True)
                     for course in deletion_courses:
                         student_courses_dict.pop(course, None)
