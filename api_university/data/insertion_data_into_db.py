@@ -24,7 +24,7 @@ def insert_data_to_db(db: initialized_db,
 
         # OPEN TRANSACTION:
         # Add groups to db
-        db.session.add_all(generate_group_instances(number_of_instance=group_count))
+        db.session.add_all(generate_group_instances(number_of_groups=group_count))
 
         # Add courses to db
         db.session.add_all(generate_course_instances(courses=courses_dict))
@@ -44,7 +44,7 @@ def insert_data_to_db(db: initialized_db,
             number_of_students=student_count,
             first_names=first_names_list,
             last_names=last_names_list,
-            groups=group_ids,
+            available_places_in_groups=group_ids,
             courses=all_courses)
         )
 
