@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from flasgger import swag_from
 from marshmallow import INCLUDE
+from typing import OrderedDict
 
 from api_university.config import swag_dir
 from api_university.models.student import StudentModel
@@ -21,7 +22,7 @@ full_student_list_schema = FullStudentSchema(many=True)
 class Student(Resource):
     @classmethod
     @swag_from(f"{swag_dir}/Student/get.yml")
-    def get(cls, student_id):
+    def get(cls, student_id) -> tuple[OrderedDict, int]:
         student = StudentModel.find_by_id_or_404(student_id)
         if request.args.get('full', 'false').lower() == 'true':
             response = full_student_schema.dump(student), 200
@@ -31,7 +32,7 @@ class Student(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/Student/post.yml")
-    def post(cls, student_id):
+    def post(cls, student_id) -> tuple[dict, int]:
         student_json = request.get_json()
         student_json['student_id'] = student_id
         new_student = full_student_schema.load(student_json, unknown=INCLUDE)
@@ -40,7 +41,7 @@ class Student(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/Student/put.yml")
-    def put(cls, student_id):
+    def put(cls, student_id) -> tuple[dict, int]:
         StudentModel.find_by_id_or_404(student_id)
         student_json = request.get_json()
         student_json['student_id'] = student_id
@@ -50,7 +51,7 @@ class Student(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/Student/delete.yml")
-    def delete(cls, student_id):
+    def delete(cls, student_id) -> tuple[dict, int]:
         student = StudentModel.find_by_id_or_404(student_id)
         student.delete_from_db()
         return {'status': 200, 'message': gettext_("student_delete").format(student_id)}, 200
@@ -59,7 +60,7 @@ class Student(Resource):
 class StudentList(Resource):
     @classmethod
     @swag_from(f"{swag_dir}/StudentList/get.yml")
-    def get(cls):
+    def get(cls) -> tuple[OrderedDict, int]:
         group_id = request.args.get('group')
         course_id = request.args.get('course')
 
@@ -83,7 +84,7 @@ class StudentList(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/StudentList/post.yml")
-    def post(cls):
+    def post(cls) -> tuple[dict, int]:
         max_student_id = StudentModel.get_max_student_id()
         student_list_json = request.get_json()
 
@@ -102,7 +103,7 @@ class StudentList(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/StudentList/put.yml")
-    def put(cls):
+    def put(cls) -> tuple[dict, int]:
         student_list_json = request.get_json()
         updated_students = full_student_list_schema.load(student_list_json, partial=True, unknown=INCLUDE)
         updated_students_counter = []
@@ -115,7 +116,7 @@ class StudentList(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/StudentList/delete.yml")
-    def delete(cls):
+    def delete(cls) -> tuple[dict, int]:
         student_list_json = request.get_json()
         student_id_list = student_list_json.get('student_id_list')
         if not student_id_list:
