@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from flasgger import swag_from
 from marshmallow import INCLUDE
+from typing import OrderedDict
 
 from api_university.config import swag_dir
 from api_university.models.group import GroupModel
@@ -20,7 +21,7 @@ full_group_list_schema = GroupSchema(many=True)
 class Group(Resource):
     @classmethod
     @swag_from(f"{swag_dir}/Group/get.yml")
-    def get(cls, group_id):
+    def get(cls, group_id: int) -> tuple[OrderedDict, int]:
         group = GroupModel.find_by_id_or_404(group_id)
         if request.args.get('full', 'false').lower() == 'true':
             response = full_group_schema.dump(group), 200
@@ -30,7 +31,7 @@ class Group(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/Group/post.yml")
-    def post(cls, group_id):
+    def post(cls, group_id: int) -> tuple[dict, int]:
         group_json = request.get_json()
         group_json['group_id'] = group_id
         new_group = full_group_schema.load(group_json, unknown=INCLUDE)
@@ -39,7 +40,7 @@ class Group(Resource):
 
     @classmethod
     @swag_from(f"{swag_dir}/Group/put.yml")
-    def put(cls, group_id):
+    def put(cls, group_id: int) -> tuple[dict, int]:
         group_json = request.get_json()
         group_json['group_id'] = group_id
         updated_group = full_group_schema.load(group_json, partial=True, unknown=INCLUDE)
@@ -49,7 +50,7 @@ class Group(Resource):
     
     @classmethod
     @swag_from(f"{swag_dir}/Group/delete.yml")
-    def delete(cls, group_id):
+    def delete(cls, group_id: int) -> tuple[dict, int]:
         group = GroupModel.find_by_id_or_404(group_id)
         group.delete_from_db()
         return {'status': 200, 'message': gettext_("group_delete").format(group_id)}, 200
@@ -58,7 +59,7 @@ class Group(Resource):
 class GroupList(Resource):
     @classmethod
     @swag_from(f"{swag_dir}/GroupList/get.yml")
-    def get(cls):
+    def get(cls) -> tuple[OrderedDict, int]:
         student_count = request.args.get('student_count')
         if student_count:
             try:

@@ -4,19 +4,21 @@
   "course_delete": "course id={} was successfully deleted",
   "course_not_found": "course id={} not found",
   "course_exists": "course id={} already exists",
+  "course_err_put_students": "only 'add_students' and 'delete_students' fields are available in the 'PUT' method, but was given 'students' field",
 
   "group_post": "group id={} was successfully created",
   "group_put": "group id={} was successfully updated",
   "group_delete": "group id={} was successfully deleted",
   "group_not_found": "group id={} not found",
   "group_exists": "group id={} already exists",
+  "group_err_put_students": "only 'add_students' and 'delete_students' fields are available in the 'PUT' method, but was given 'students' field",
 
   "student_post": "student id={} was successfully created",
   "student_put": "student id={} was successfully updated",
   "student_delete": "student id={} was successfully deleted",
   "student_not_found": "student id={} not found",
   "student_exists": "student id={} already exists",
-  "student_err_put_course": "only 'add_courses' and 'delete_courses' fields are available in the 'PUT' method, but was given 'courses' field",
+  "student_err_put_courses": "only 'add_courses' and 'delete_courses' fields are available in the 'PUT' method, but was given 'courses' field",
 
 
   "student_list_post": "student ids={} were successfully added",

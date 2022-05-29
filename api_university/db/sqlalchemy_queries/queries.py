@@ -10,7 +10,7 @@ from api_university.models.relationships import students_courses
 
 class ComplexQuery:
     @staticmethod
-    def get_students_filter_by_group_and_course(group_id: int, course_id: int):
+    def get_students_filter_by_group_and_course(group_id: int, course_id: int) -> StudentModel:
         query = StudentModel.query\
                             .outerjoin(GroupModel)\
                             .outerjoin(students_courses)\
@@ -21,7 +21,7 @@ class ComplexQuery:
         return query.all()
 
     @staticmethod
-    def get_groups_filter_by_student_count(student_count: int):
+    def get_groups_filter_by_student_count(student_count: int) -> GroupModel:
         query = GroupModel.query\
                           .outerjoin(StudentModel)\
                           .group_by(GroupModel.group_id)\

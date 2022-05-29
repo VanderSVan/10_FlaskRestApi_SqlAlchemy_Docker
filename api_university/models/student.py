@@ -1,4 +1,5 @@
 from sqlalchemy import func, asc
+from typing import NoReturn
 
 from api_university.handlers import make_error
 from api_university.db.db_sqlalchemy import db
@@ -24,7 +25,7 @@ class StudentModel(db.Model):
     
     @classmethod
     def get_number_of_students(cls) -> "StudentModel":
-        return cls.query.count()
+        return cls.query.count().first()
     
     @classmethod
     def get_max_student_id(cls) -> "StudentModel":
@@ -50,18 +51,18 @@ class StudentModel(db.Model):
         return cls.query.not_exists_or_400(student_id, make_error(status, message))
 
     @classmethod
-    def get_students_by_ids(cls, student_ids: list) -> list["StudentModel"] or None:
+    def get_students_by_ids_or_404(cls, student_ids: list) -> list["StudentModel"] or None:
         if student_ids is None:
             selected_students = None
         else:
             selected_students = [cls.find_by_id_or_404(student) for student in student_ids]
         return selected_students
 
-    def save_to_db(self) -> None:
-        # local_object = db.session.merge(self)
+    def save_to_db(self) -> NoReturn:
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self) -> None:
+    def delete_from_db(self) -> NoReturn:
         db.session.delete(self)
         db.session.commit()
+
