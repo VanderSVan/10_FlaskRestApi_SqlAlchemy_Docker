@@ -40,5 +40,5 @@ class TestingConfiguration(Configuration):
     SQLALCHEMY_DATABASE_URI = (f"postgresql+psycopg2://"
                                f"{DATABASE['user_name']}:"
                                f"{DATABASE['user_password']}@"
-                               f"{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/"
+                               f"0.0.0.0:5432/"
                                f"{DATABASE['db_name']}")
