@@ -1,0 +1,54 @@
+Get student list
+---
+tags:
+  - Student list
+parameters:
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
+  - name: group
+    in: query
+    required: false
+    type: integer
+    description: group id
+  - name: course
+    in: query
+    required: false
+    type: integer
+    description: course id
+responses:
+  200:
+    description: Ok
+    schema:
+      $ref: '#/definitions/get_student_list'
+produces:
+  - application/json
+
+definitions:
+  get_student_list:
+      type: array
+      items:
+        properties:
+          student_id:
+            type: string
+          first_name:
+            type: string
+          last_name:
+            type: string
+          group_name:
+            type: string
+          course_names:
+            type: string
+      example:
+        - student_id: 1
+          first_name: Alex
+          last_name: Brown
+          group_name: ST-81
+          course_names: Computer Science, English
+        - student_id: 2
+          first_name: John
+          last_name: Marlin
+          group_name: SY-82
+          course_names: Philosophy, Biology, Algebra

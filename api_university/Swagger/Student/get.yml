@@ -1,0 +1,41 @@
+Get student info
+---
+tags:
+  - Student
+parameters:
+  - name: student_id
+    in: path
+    required: true
+    type: integer
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
+responses:
+  200:
+    description: Get student info by student_id
+    schema:
+      $ref: '#/definitions/get_student'
+produces:
+  - application/json
+definitions:
+  get_student:
+    type: object
+    properties:
+      student_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      group_name:
+        type: string
+      course_names:
+        type: string
+    example:
+      student_id: 1
+      first_name: John
+      last_name: Marlin
+      group_name: NV-78
+      course_names: Physics, Electrical engineering

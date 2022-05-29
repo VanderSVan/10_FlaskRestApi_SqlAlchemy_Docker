@@ -1,0 +1,38 @@
+Get course info
+---
+tags:
+  - Course
+parameters:
+  - name: course_id
+    in: path
+    required: true
+    type: integer
+  - name: full
+    in: query
+    required: false
+    type: string
+    description: true or false
+responses:
+  200:
+    description: Get course info by course_id
+    schema:
+      $ref: '#/definitions/get_course'
+produces:
+  - application/json
+definitions:
+  get_course:
+    type: object
+    properties:
+      course_id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      students:
+        type: string
+    example:
+      course_id: 1
+      name: Mathematics
+      description: Mathematics is the science and study of quality, structure, space, and change.
+      students: [3,4,8]

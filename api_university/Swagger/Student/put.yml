@@ -1,0 +1,59 @@
+Update student info
+---
+tags:
+  - Student
+parameters:
+  - name: student_id
+    in: path
+    required: true
+    type: integer
+  - name: Student info
+    in: body
+    schema:
+      $ref: "#definitions/put_student"
+
+responses:
+  200:
+    description: Ok
+    schema:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+      example:
+        status: 200
+        message: course '1' was successfully updated
+produces:
+  - application/json
+
+definitions:
+  put_student:
+    type: object
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      group_id:
+        type: integer
+      add_courses:
+        type: array
+        items:
+          properties:
+            course_id:
+              type: integer
+      delete_courses:
+        type: array
+        items:
+          properties:
+            course_id:
+              type: integer
+    example:
+      first_name: John
+      last_name: Marlin
+      group_id: 1
+      add_courses: [ 1, 2, 3 ]
+      delete_courses: [ 4, 5, 6 ]
+
