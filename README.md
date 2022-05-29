@@ -9,6 +9,7 @@
 - `Swagger`
 
 ## Description:
+0) API URL = http://127.0.0.1:5000/api/v1
 1) **Create an application that inserts/updates/deletes data in the database using `sqlalchemy` and `flask rest framework`.**
 
 2) **Use `PostgreSQL` DB.**
@@ -81,12 +82,16 @@
    ```commandline
    docker compose up
    ```
-### 6. If you need to stop the containers:
+### 6. Try to get data:
+```commandline
+curl http://127.0.0.1:5000/api/v1/students/10
+```
+### 7. If you need to stop the containers:
    ```commandline
     docker compose down
    ```
 
-#### Possible errors:
+#### 8. Possible errors:
 - if you got something like this:
    ```commandline
    Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock:...
