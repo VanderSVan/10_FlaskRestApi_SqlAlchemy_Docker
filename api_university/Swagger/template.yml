@@ -1,0 +1,9 @@
+swagger: '2.0'
+info:
+  title: 'University API'
+  description: 'This is API for working with university data.'
+  contact:
+    email: shikhanovivan@gmail.com
+    url: https://github.com/VanderSVan/Task_10_PSQL_Rest_API
+  version: '1.0.0'
+schemes: [http]
