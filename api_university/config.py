@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 api_dir = os.path.abspath(os.path.dirname(__file__))
 swag_dir = os.path.join(api_dir, 'Swagger')
 project_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -40,5 +43,5 @@ class TestingConfiguration(Configuration):
     SQLALCHEMY_DATABASE_URI = (f"postgresql+psycopg2://"
                                f"{DATABASE['user_name']}:"
                                f"{DATABASE['user_password']}@"
-                               f"0.0.0.0:5432/"
+                               f"{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/"
                                f"{DATABASE['db_name']}")
