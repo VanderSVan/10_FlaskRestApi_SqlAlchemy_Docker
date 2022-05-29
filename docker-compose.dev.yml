@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  postgresql_db:
+    restart: always
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - psql_db:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - rest_api_university
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    container_name: api
+    environment:
+      PG_HOST: "postgresql_db"
+    command: bash -c "python3 api_university/app.py"
+    volumes:
+      - myapp:/usr/src/app
+    ports:
+      - '5000:5000'
+    depends_on:
+      - postgresql_db
+    networks:
+      - rest_api_university
+
+networks:
+  rest_api_university:
+    driver: bridge
+
+volumes:
+  psql_db:
+  myapp:
