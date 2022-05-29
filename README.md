@@ -98,7 +98,12 @@ docker exec -it api bash
 ```bash
 cd tests/ && python3 -m pytest
 ```
-### 8. If you need to stop the containers:
+### 8. If you need:
+- to stop the containers only:
+   ```commandline
+    docker compose stop
+    ```
+- to stop and remove the containers:
    ```commandline
     docker compose down
    ```
