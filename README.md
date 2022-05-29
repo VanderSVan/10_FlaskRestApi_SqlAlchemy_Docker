@@ -70,8 +70,13 @@
 ### 2. Then git clone this project in your folder.
 ### 3. Go to the folder where are `docker-compose.yml` and `Dockerfile` are located.
 ### 4. Now use following command:
+- default mode (production mode)
    ```commandline
    docker compose build
+   ```
+- If you want to run in development mode, then:
+   ```commandline
+   docker compose -f docker-compose.dev.yml build
    ```
 ### 5. After image building, you can up the containers of one of these commands:
 - background mode:
@@ -86,12 +91,19 @@
 ```commandline
 curl http://127.0.0.1:5000/api/v1/students/10
 ```
-### 7. If you need to stop the containers:
+### 7. If you use development mode, you can run pytest:
+```commandline
+docker exec -it api bash
+```
+```bash
+cd tests/ && python3 -m pytest
+```
+### 8. If you need to stop the containers:
    ```commandline
     docker compose down
    ```
 
-#### 8. Possible errors:
+#### 9. Possible errors:
 - if you got something like this:
    ```commandline
    Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock:...
