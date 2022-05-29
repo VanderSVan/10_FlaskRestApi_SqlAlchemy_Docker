@@ -1,6 +1,4 @@
-import os
 import pytest
-from sqlalchemy import event
 
 from api_university.app import create_app
 from api_university.db.db_sqlalchemy import db as db_
@@ -8,10 +6,6 @@ from api_university.ma import ma as ma_
 from tests.test_data.data import group_list, course_list, student_list
 from api_university.config import TestingConfiguration
 from api_university.db.db_operations import DatabaseOperation
-
-from api_university.models.student import StudentModel
-from api_university.models.course import CourseModel
-from api_university.models.group import GroupModel
 
 db_config = TestingConfiguration.DATABASE
 
@@ -60,11 +54,3 @@ def session(db, app):
     session_.rollback()
     session_.close()
     session_.remove()
-
-
-# if __name__ == '__main__':
-#     database = DatabaseOperation(dbname="test_db",
-#                                  user_name="test_user",
-#                                  user_password="1111",
-#                                  role_name="test_role")
-#     database.delete_db()

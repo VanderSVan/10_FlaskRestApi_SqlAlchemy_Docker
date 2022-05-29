@@ -29,9 +29,6 @@ class DevelopmentConfiguration(Configuration):
 
 
 class TestingConfiguration(Configuration):
-    # DATABASE = {
-    #     'test_db_name': 'test_university.db'
-    # }
     DATABASE = {
         'role_name': 'test_role',
         'user_name': 'test_user',
@@ -40,12 +37,8 @@ class TestingConfiguration(Configuration):
     }
     ENV = 'test'
     TESTING = True
-    # TESTDB_PATH = project_dir + f"/tests/{DATABASE['test_db_name']}"
-    # TEST_DATABASE_URI = 'sqlite:///' + TESTDB_PATH
-    # # TEST_DATABASE_URI = "sqlite:///:memory:"
-    # SQLALCHEMY_DATABASE_URI = TEST_DATABASE_URI
     SQLALCHEMY_DATABASE_URI = (f"postgresql+psycopg2://"
                                f"{DATABASE['user_name']}:"
                                f"{DATABASE['user_password']}@"
-                               f"localhost:5432/"
+                               f"{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/"
                                f"{DATABASE['db_name']}")
