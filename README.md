@@ -8,7 +8,7 @@
 - `Marshmallow`
 - `Swagger`
 
-##Description:
+## Description:
 1) **Create an application that inserts/updates/deletes data in the database using `sqlalchemy` and `flask rest framework`.**
 
 2) **Use `PostgreSQL` DB.**
@@ -56,7 +56,7 @@
    - SQLalchemy https://www.sqlalchemy.org/
 # Installation:
 ## Installation via Docker-compose:
-###1. For the beginning install `docker` and `docker compose` on your machine:
+### 1. For the beginning install `docker` and `docker compose` on your machine:
 1) [docker](https://docs.docker.com/engine/install/ubuntu/)
 2) [docker-compose](https://docs.docker.com/compose/install/)
 3) P.S.: Depending on the version use:
@@ -66,13 +66,13 @@
     docker-compose
     ```
 
-###2. Then git clone this project in your folder.
-###3. Go to the folder where are `docker-compose.yml` and `Dockerfile` are located.
-###4. Now use following command:
+### 2. Then git clone this project in your folder.
+### 3. Go to the folder where are `docker-compose.yml` and `Dockerfile` are located.
+### 4. Now use following command:
    ```commandline
    docker compose build
    ```
-###5. After image building, you can up the containers of one of these commands:
+### 5. After image building, you can up the containers of one of these commands:
 - background mode:
    ```commandline
    docker compose up -d
@@ -81,12 +81,12 @@
    ```commandline
    docker compose up
    ```
-###6. If you need to stop the containers:
+### 6. If you need to stop the containers:
    ```commandline
     docker compose down
    ```
 
-####Possible errors:
+#### Possible errors:
 - if you got something like this:
    ```commandline
    Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock:...
@@ -113,14 +113,14 @@ So install this:
 sudo apt-get install libpq-dev
 ```
 ## Installation via IDE or other:
-###1) create env and install packages:
+### 1) create env and install packages:
 ```commandline
 pip install pipenv
 pipenv shell
 pipenv install
 ```
 
-###2) For start api:
+### 2) For start api:
 - `Bash`:
    ```bash
    export FLASK_APP=app.py
