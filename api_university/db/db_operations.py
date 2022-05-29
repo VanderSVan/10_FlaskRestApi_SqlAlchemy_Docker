@@ -96,7 +96,7 @@ class DatabaseOperation:
 
 
 if __name__ == '__main__':
-    # init database params
+    # init database:
     database = DatabaseOperation()
 
     # db operations:
