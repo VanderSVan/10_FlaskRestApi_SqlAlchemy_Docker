@@ -14,6 +14,7 @@ from api_university.config import (
     DevelopmentConfiguration,
     TestingConfiguration
 )
+from api_university.db.tools.utils import PsqlDatabaseConnection
 from api_university.db.db_operations import DatabaseOperation
 from api_university.data.insertion_data_into_db import insert_data_to_db
 from api_university.resources.student import Student, StudentList
@@ -47,20 +48,21 @@ def create_app(test_config=False, dev_config=False):
         # create db if not exists
         @application.before_first_request
         def create_tables():
-            # create db (gets data from .env)
-            database = DatabaseOperation()
-            database.create_db()
+            with PsqlDatabaseConnection() as conn:
+                # create db (gets data from .env)
+                database = DatabaseOperation(connection=conn)
+                database.create_all()
 
-            # create tables
-            db.create_all()
+                # create tables
+                db.create_all()
 
-            # insert prepared data
-            insert_data_to_db(db,
-                              group_count=10,
-                              student_count=200,
-                              lower_limit_of_students_in_group=10,
-                              upper_limit_of_students_in_group=30)
-            db.session.commit()
+                # insert prepared data
+                insert_data_to_db(db,
+                                  group_count=10,
+                                  student_count=200,
+                                  lower_limit_of_students_in_group=10,
+                                  upper_limit_of_students_in_group=30)
+                db.session.commit()
 
     # Handlers
     @application.errorhandler(ValidationError)
