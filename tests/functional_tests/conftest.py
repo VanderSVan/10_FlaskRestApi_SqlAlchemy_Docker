@@ -6,18 +6,22 @@ from api_university.ma import ma as ma_
 from tests.test_data.data import group_list, course_list, student_list
 from api_university.config import TestingConfiguration
 from api_university.db.db_operations import DatabaseOperation
+from api_university.db.tools.utils import PsqlDatabaseConnection
 
 db_config = TestingConfiguration.DATABASE
 
 
 @pytest.fixture(scope="session")
 def app():
-    database = DatabaseOperation(dbname="test_db",
-                                 user_name="test_user",
-                                 user_password="1111",
-                                 role_name="test_role")
-    database.delete_db()
-    database.create_db()
+    with PsqlDatabaseConnection() as conn:
+        database = DatabaseOperation(connection=conn,
+                                     db_name=db_config['db_name'],
+                                     user_name=db_config['user_name'],
+                                     user_password=db_config['user_password'],
+                                     role_name=db_config['role_name'])
+        database.drop_all()
+        database.create_all()
+
     app_ = create_app(test_config=True)
     with app_.app_context():
 

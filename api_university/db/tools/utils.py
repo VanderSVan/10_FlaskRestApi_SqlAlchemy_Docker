@@ -54,7 +54,7 @@ class PsqlDatabaseConnection:
 
         self.connection.set_isolation_level(self.isolation_level)
         print("[Postgres connection open:")
-        return self
+        return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.close()

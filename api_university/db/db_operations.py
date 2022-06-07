@@ -1,17 +1,18 @@
 import os
 from dataclasses import dataclass
-from psycopg2 import DatabaseError
+from psycopg2 import Error
+from psycopg2.extensions import connection as psycopg2_conn
 from dotenv import load_dotenv
 
 from api_university.db.tools.utils import (
     PsqlDatabaseConnection,
     try_except_decorator
 )
-from api_university.db.tools.db_tools import (
-    Database,
-    DatabaseRole,
-    DatabaseUser,
-    DatabasePrivilege
+from api_university.db.tools.sql_operations import (
+    DatabaseSQLOperation,
+    RoleSQLOperation,
+    UserSQLOperation,
+    PrivilegeSQLOperation
 )
 
 load_dotenv()
@@ -19,86 +20,144 @@ load_dotenv()
 
 @dataclass()
 class DatabaseOperation:
-    connection = PsqlDatabaseConnection()
-    dbname: str = os.getenv("PG_DB")
+    connection: psycopg2_conn
+    db_name: str = os.getenv("PG_DB")
     user_name: str = os.getenv("PG_USER")
     user_password: str = os.getenv("PG_USER_PASSWORD")
     role_name: str = os.getenv("PG_ROLE")
 
-    @try_except_decorator(DatabaseError)
+    @try_except_decorator(Error)
     def create_db(self):
-        """
-        Default: Creates db, role and user with password.
-        Gets data from .env.
-        """
-        with self.connection as db:
-            # Create new database:
-            new_db = Database(self.dbname, db.connection)
-            new_db.create_postgresql_db()
+        cursor = self.connection.cursor()
+        cursor.execute(DatabaseSQLOperation.check_db_existence(self.db_name))
+        exists, = cursor.fetchone()
+        if exists:
+            print(f"\tDatabase '{self.db_name}' already exists.")
+        else:
+            cursor.execute(DatabaseSQLOperation.create_db(self.db_name))
+            print(f"\tDatabase '{self.db_name}' has been created.")
 
-            # Create new user:
-            new_user = DatabaseUser(self.user_name, self.user_password, db.connection)
-            new_user.create_new_user()
+    @try_except_decorator(Error)
+    def drop_db(self):
+        cursor = self.connection.cursor()
+        cursor.execute(DatabaseSQLOperation.check_db_existence(self.db_name))
+        exists, = cursor.fetchone()
+        if exists:
+            cursor.execute(DatabaseSQLOperation.drop_db(self.db_name))
+            print(f"\tDatabase '{self.db_name}' has been successfully dropped.")
+        else:
+            print(f"\tCan not drop the db '{self.db_name}', database does not exists.")
 
-            if self.role_name is not None:
-                # Create new role:
-                new_role = DatabaseRole(self.role_name, db.connection)
-                new_role.create_new_role()
-                # Assign privileges on the database to the role:
-                new_role_privileges = DatabasePrivilege(new_db.db_name, new_role.role_name, db.connection)
-                new_role_privileges.grant_all_privileges()
-                # Join user to role:
-                new_role.join_user_to_role(new_user.username)
-            else:
-                # Assign privileges on the database to the user:
-                new_user_privileges = DatabasePrivilege(new_db.db_name, new_user.username, db.connection)
-                new_user_privileges.grant_all_privileges()
+    @try_except_decorator(Error)
+    def create_role(self):
+        cursor = self.connection.cursor()
+        cursor.execute(RoleSQLOperation.check_role_existence(self.role_name))
+        exists, = cursor.fetchone()
+        if exists:
+            print(f"\tRole '{self.role_name}' already exists.")
+        else:
+            cursor.execute(RoleSQLOperation.create_new_role(self.role_name))
+            print(f"\tRole '{self.role_name}' has been created")
 
-    @try_except_decorator(DatabaseError)
-    def delete_db(self):
-        """
-        WARNING!
-        COMPLETE DELETION OF DATABASE TOGETHER WITH USERS AND ROLES!
-        """
-        with self.connection as db:
-            # Init db:
-            existing_db = Database(self.dbname, db.connection)
+    @try_except_decorator(Error)
+    def drop_role(self):
+        cursor = self.connection.cursor()
+        cursor.execute(RoleSQLOperation.check_role_existence(self.role_name))
+        exists, = cursor.fetchone()
+        if exists:
+            cursor.execute(RoleSQLOperation.drop_role(self.role_name))
+            print(f"\tRole '{self.role_name}' has been successfully dropped.")
+        else:
+            print(f"\tCan not drop role '{self.role_name}', role does not exists.")
 
-            # Init user:
-            existing_user = DatabaseUser(self.user_name, self.user_password, db.connection)
+    @try_except_decorator(Error)
+    def join_user_to_role(self, user_name: str):
+        cursor = self.connection.cursor()
+        cursor.execute(UserSQLOperation.check_membership(user_name))
+        exists, = cursor.fetchone()
+        if exists:
+            print(f"\tUser '{user_name}' already joined.")
+        else:
+            cursor.execute(RoleSQLOperation.join_user_to_role(self.role_name, user_name))
+            print(f"\tUser '{user_name}' has been successfully joined to role.")
 
-            if self.role_name is not None:
-                # Init role
-                existing_role = DatabaseRole(self.role_name, db.connection)
-                # Init role privilege:
-                existing_role_privileges = DatabasePrivilege(existing_db.db_name,
-                                                             existing_role.role_name,
-                                                             db.connection)
-                # Remove all privileges from role:
-                existing_role_privileges.remove_all_privileges()
-                # Remove user from role:
-                existing_role.remove_user_from_role(existing_user.username)
-                # Drop the role:
-                existing_role.drop_role()
-            else:
-                # Init user privilege:
-                existing_user_privileges = DatabasePrivilege(existing_db.db_name,
-                                                             existing_user.username,
-                                                             db.connection)
-                # Remove all privileges from user:
-                existing_user_privileges.remove_all_privileges()
+    @try_except_decorator(Error)
+    def remove_user_from_role(self, user_name: str):
+        cursor = self.connection.cursor()
+        cursor.execute(UserSQLOperation.check_membership(user_name))
+        exists, = cursor.fetchone()
+        if exists:
+            cursor.execute(RoleSQLOperation.remove_user_from_role(self.role_name, user_name))
+            print(f"\tUser '{user_name}' has been successfully removed from role.")
+        else:
+            print(f"\tUser '{user_name}' has no membership in any role.")
 
-            # Drop the db:
-            existing_db.drop_postgresql_db()
+    @try_except_decorator(Error)
+    def create_user(self):
+        cursor = self.connection.cursor()
+        cursor.execute(UserSQLOperation.check_user_existence(self.user_name))
+        exists, = cursor.fetchone()
+        if exists:
+            print(f"\tUser '{self.user_name}' already exists.")
+        else:
+            cursor.execute(UserSQLOperation.create_new_user(self.user_name, self.user_password))
+            print(f"\tUser '{self.user_name}' has been created")
 
-            # Drop the user:
-            existing_user.drop_user()
+    @try_except_decorator(Error)
+    def drop_user(self):
+        cursor = self.connection.cursor()
+        cursor.execute(UserSQLOperation.check_user_existence(self.user_name))
+        exists, = cursor.fetchone()
+        if exists:
+            cursor.execute(UserSQLOperation.drop_user(self.user_name))
+            print(f"\tUser '{self.user_name}' has been successfully dropped.")
+        else:
+            print(f"\tCan not drop user '{self.user_name}', user does not exists.")
+
+    @try_except_decorator(Error)
+    def grant_all_privileges(self, role_or_user_name: str):
+        cursor = self.connection.cursor()
+        cursor.execute(PrivilegeSQLOperation.grant_all_privileges(self.db_name, role_or_user_name))
+        print(f"\tAll privileges have been granted to '{role_or_user_name}'")
+
+    @try_except_decorator(Error)
+    def remove_all_privileges(self, role_or_user_name: str):
+        cursor = self.connection.cursor()
+        cursor.execute(PrivilegeSQLOperation.remove_all_privileges(self.db_name, role_or_user_name))
+        print(f"\tAll privileges have been removed from '{role_or_user_name}'")
+
+    def create_all(self):
+        if self.db_name is not None:
+            self.create_db()
+
+        if self.user_name is not None:
+            self.create_user()
+
+        if self.role_name is not None:
+            self.create_role()
+            self.grant_all_privileges(self.role_name)
+            self.join_user_to_role(self.user_name)
+        else:
+            self.grant_all_privileges(self.user_name)
+
+    def drop_all(self):
+        if self.role_name is not None:
+            self.remove_all_privileges(self.role_name)
+            self.remove_user_from_role(self.user_name)
+            self.drop_role()
+        else:
+            self.remove_all_privileges(self.user_name)
+
+        self.drop_db()
+        self.drop_user()
 
 
 if __name__ == '__main__':
-    # init database:
-    database = DatabaseOperation()
+    with PsqlDatabaseConnection() as conn:
 
-    # db operations:
-    database.create_db()
-    # database.delete_db()
+        # init database params:
+        database = DatabaseOperation(connection=conn)
+
+        # db operations:
+        # database.create_all()
+        database.drop_all()
