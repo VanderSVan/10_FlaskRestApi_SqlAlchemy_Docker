@@ -179,11 +179,18 @@ So install this:
 ### 1) Create env and install packages:
 ```commandline
 pip install pipenv
+```
+```commandline
 pipenv shell
+```
+```commandline
 pipenv install
-# or
+```
+Or
+```commandline
 pipenv install --dev
 ```
+
 
 ### 2) For start api:
 - `Ubuntu` (`Bash`):
