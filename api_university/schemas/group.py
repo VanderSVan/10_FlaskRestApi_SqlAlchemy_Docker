@@ -22,27 +22,28 @@ class GroupSchema(ma.SQLAlchemyAutoSchema):
 
     @pre_load
     def process_data(self, data: dict, **kwargs):
-        if type(data) is dict:
-            if request.method == 'POST':
-                GroupModel.not_find_by_id_or_400(data.get('group_id'))
-                StudentModel.get_students_by_ids_or_404(data.get('students'))
+        if isinstance(data, dict):
+            method = request.method
+            match method:
+                case 'POST':
+                    GroupModel.not_find_by_id_or_400(data.get('group_id'))
+                    StudentModel.get_students_by_ids_or_404(data.get('students'))
+                case 'PUT':
+                    group = GroupModel.find_by_id_or_404(data.get('group_id'))
 
-            if request.method == 'PUT':
-                group = GroupModel.find_by_id_or_404(data.get('group_id'))
+                    if data.get('students'):
+                        message = gettext_("group_err_put_students")
+                        status = 400
+                        abort(make_error(status, message))
 
-                if data.get('students'):
-                    message = gettext_("group_err_put_students")
-                    status = 400
-                    abort(make_error(status, message))
+                    if data.get('add_students'):
+                        new_students = StudentModel.get_students_by_ids_or_404(data['add_students'])
+                        group.students.extend(new_students)
 
-                if data.get('add_students'):
-                    new_students = StudentModel.get_students_by_ids_or_404(data['add_students'])
-                    group.students.extend(new_students)
-
-                if data.get('delete_students'):
-                    deletion_students = StudentModel.get_students_by_ids_or_404(data['delete_students'])
-                    group_student_dict = dict.fromkeys(group.students, True)
-                    for student in deletion_students:
-                        group_student_dict.pop(student, None)
-                    group.students = list(group_student_dict)
+                    if data.get('delete_students'):
+                        deletion_students = StudentModel.get_students_by_ids_or_404(data['delete_students'])
+                        group_student_dict = dict.fromkeys(group.students, True)
+                        for student in deletion_students:
+                            group_student_dict.pop(student, None)
+                        group.students = list(group_student_dict)
         return data

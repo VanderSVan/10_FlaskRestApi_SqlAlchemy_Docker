@@ -9,6 +9,7 @@ from api_university.models.group import GroupModel
 from api_university.schemas.group import GroupSchema
 from api_university.db.sqlalchemy_queries.queries import ComplexQuery
 from api_university.responses.response_strings import gettext_
+from api_university.resources.type_hintings import Query_parameter_value
 
 
 short_group_schema = GroupSchema(only=('group_id', 'name',))
@@ -23,11 +24,12 @@ class Group(Resource):
     @swag_from(f"{swag_dir}/Group/get.yml")
     def get(cls, group_id: int) -> tuple[OrderedDict, int]:
         group = GroupModel.find_by_id_or_404(group_id)
-        if request.args.get('full', 'false').lower() == 'true':
-            response = full_group_schema.dump(group), 200
-        else:
-            response = short_group_schema.dump(group), 200
-        return response
+        full: Query_parameter_value = request.args.get('full', 'false').lower()
+        match full:
+            case 'true':
+                return full_group_schema.dump(group), 200
+            case _:
+                return short_group_schema.dump(group), 200
 
     @classmethod
     @swag_from(f"{swag_dir}/Group/post.yml")
@@ -70,8 +72,9 @@ class GroupList(Resource):
         else:
             groups = GroupModel.get_all_groups()
 
-        if request.args.get('full', 'false').lower() == 'true':
-            response = full_group_list_schema.dump(groups), 200
-        else:
-            response = short_group_list_schema.dump(groups), 200
-        return response
+        full: Query_parameter_value = request.args.get('full', 'false').lower()
+        match full:
+            case 'true':
+                return full_group_list_schema.dump(groups), 200
+            case _:
+                return short_group_list_schema.dump(groups), 200

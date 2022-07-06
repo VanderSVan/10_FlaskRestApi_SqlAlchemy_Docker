@@ -11,6 +11,7 @@ from api_university.models.group import GroupModel
 from api_university.schemas.student import ShortStudentSchema, FullStudentSchema
 from api_university.db.sqlalchemy_queries.queries import ComplexQuery
 from api_university.responses.response_strings import gettext_
+from api_university.resources.type_hintings import Query_parameter_value
 
 short_student_schema = ShortStudentSchema()
 full_student_schema = FullStudentSchema()
@@ -24,11 +25,12 @@ class Student(Resource):
     @swag_from(f"{swag_dir}/Student/get.yml")
     def get(cls, student_id) -> tuple[OrderedDict, int]:
         student = StudentModel.find_by_id_or_404(student_id)
-        if request.args.get('full', 'false').lower() == 'true':
-            response = full_student_schema.dump(student), 200
-        else:
-            response = short_student_schema.dump(student), 200
-        return response
+        full: Query_parameter_value = request.args.get('full', 'false').lower()
+        match full:
+            case 'true':
+                return full_student_schema.dump(student), 200
+            case _:
+                return short_student_schema.dump(student), 200
 
     @classmethod
     @swag_from(f"{swag_dir}/Student/post.yml")
@@ -61,8 +63,9 @@ class StudentList(Resource):
     @classmethod
     @swag_from(f"{swag_dir}/StudentList/get.yml")
     def get(cls) -> tuple[OrderedDict, int]:
-        group_id = request.args.get('group')
-        course_id = request.args.get('course')
+        full: Query_parameter_value = request.args.get('full', 'false').lower()
+        group_id: Query_parameter_value = request.args.get('group')
+        course_id: Query_parameter_value = request.args.get('course')
 
         if group_id and course_id:
             student_list = ComplexQuery.get_students_filter_by_group_and_course(int(group_id), int(course_id))
@@ -75,12 +78,11 @@ class StudentList(Resource):
         else:
             student_list = StudentModel.get_all_students()
 
-        if request.args.get('full', 'false').lower() == 'true':
-            response = full_student_list_schema.dump(student_list), 200
-        else:
-            response = short_student_list_schema.dump(student_list), 200
-
-        return response
+        match full:
+            case 'true':
+                return full_student_list_schema.dump(student_list), 200
+            case _:
+                return short_student_list_schema.dump(student_list), 200
 
     @classmethod
     @swag_from(f"{swag_dir}/StudentList/post.yml")
