@@ -8,6 +8,7 @@ from api_university.config import swag_dir
 from api_university.models.course import CourseModel
 from api_university.schemas.course import CourseSchema
 from api_university.responses.response_strings import gettext_
+from api_university.resources.type_hintings import Query_parameter_value
 
 short_course_schema = CourseSchema(only=('course_id', 'name',))
 full_course_schema = CourseSchema()
@@ -21,11 +22,12 @@ class Course(Resource):
     @swag_from(f"{swag_dir}/Course/get.yml")
     def get(cls, course_id: int) -> tuple[OrderedDict, int]:
         course = CourseModel.find_by_id_or_404(course_id)
-        if request.args.get('full', 'false').lower() == 'true':
-            response = full_course_schema.dump(course), 200
-        else:
-            response = short_course_schema.dump(course), 200
-        return response
+        full: Query_parameter_value = request.args.get('full', 'false').lower()
+        match full:
+            case 'true':
+                return full_course_schema.dump(course), 200
+            case _:
+                return short_course_schema.dump(course), 200
 
     @classmethod
     @swag_from(f"{swag_dir}/Course/post.yml")
@@ -58,8 +60,9 @@ class CourseList(Resource):
     @swag_from(f"{swag_dir}/CourseList/get.yml")
     def get(cls) -> tuple[OrderedDict, int]:
         course_list = CourseModel.get_all_courses()
-        if request.args.get('full', 'false').lower() == 'true':
-            response = full_course_list_schema.dump(course_list), 200
-        else:
-            response = short_course_list_schema.dump(course_list), 200
-        return response
+        full: Query_parameter_value = request.args.get('full', 'false').lower()
+        match full:
+            case 'true':
+                return full_course_list_schema.dump(course_list), 200
+            case _:
+                return short_course_list_schema.dump(course_list), 200
