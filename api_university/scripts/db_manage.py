@@ -29,30 +29,26 @@ def create_arguments():
 
 def main():
     args = create_arguments()
+
     with PsqlDatabaseConnection() as conn:
-        # db operations:
-        if args.db_name or args.user_name or args.user_password or args.role_name:
-            # init database
-            database = DatabaseOperation(connection=conn,
-                                         db_name=args.db_name,
-                                         user_name=args.user_name,
-                                         user_password=args.user_password,
-                                         role_name=args.role_name)
-            if args.create_db:
-                database.create_all()
-            elif args.drop_db:
-                database.drop_all()
+        parameters = dict(
+            connection=conn,
+            db_name=args.db_name if args.db_name else os.getenv("PG_DB", "your_test_db"),
+            user_name=args.user_name if args.user_name else os.getenv("PG_USER", "your_test_user"),
+            user_password=(args.user_password if args.user_password
+                           else os.getenv("PG_USER_PASSWORD", "your_test_password")),
+            role_name=args.role_name if args.role_name else os.getenv("PG_ROLE", "your_test_role")
+        )
+        # init database
+        database = DatabaseOperation(**parameters)
+
+        if args.create_db:
+            database.create_all()
+        elif args.drop_db:
+            database.drop_all()
         else:
-            # init database
-            database = DatabaseOperation(connection=conn,
-                                         db_name=os.getenv("PG_DB"),
-                                         user_name=os.getenv("PG_USER"),
-                                         user_password=os.getenv("PG_USER_PASSWORD"),
-                                         role_name=os.getenv("PG_ROLE"))
-            if args.create_db:
-                database.create_all()
-            elif args.drop_db:
-                database.drop_all()
+            raise ValueError("arguments '--create_db' and '--drop_db' "
+                             "cannot be empty at the same time.")
 
 
 if __name__ == '__main__':

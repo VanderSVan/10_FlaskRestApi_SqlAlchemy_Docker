@@ -89,6 +89,22 @@ Create relation MANY-TO-MANY between tables STUDENTS and COURSES.
 
    
 ## Installation:
+First you need to create `.env` file with environment variables at the root of the project, that contains:
+```
+POSTGRES_DB = superuser_database_name (by default: postgres)
+POSTGRES_USER = superuser_login (by default: postgres)
+POSTGRES_PASSWORD = superuser_password (by default: postgres)
+PG_HOST = host_url (by default: localhost)
+PG_PORT = postgres_port  (by default: 5432)
+PG_DB = your_database_name (by default: university)
+PG_ROLE = your_role_name
+PG_USER = your_user_name
+PG_USER_PASSWORD = your_user_password
+```
+
+Or you can set these variables yourself.
+
+
 ### Installation via Docker-compose:
 
 <details>
@@ -347,3 +363,42 @@ http://0.0.0.0:5000/api/v1
     flask db upgrade
     ```
 </details>
+
+## CLI
+**Simple command line interface, that:**
+
+1) allows you to create db:
+   ``` commandline
+   py -m api_university.scripts --create_db
+   ```
+2) allows you to drop db:
+   ``` commandline
+   py -m api_university.scripts --drop_db
+   ```
+3) And contains optional arguments:
+    - `-d`, `--db_name`, allows assign db name:
+   
+        ``` commandline
+        py -m api_university.scripts --drop_db -d your_db_name
+        ```
+
+    - `-u`, `--user_name`, allows assign username:
+   
+        ``` commandline
+        py -m api_university.scripts --create_db -r your_user_name
+        ```
+    
+    - `-r`, `--role_name`, allows assign role name:
+   
+        ``` commandline
+        py -m api_university.scripts --create_db -r your_role_name
+        ```
+    
+    - `-p`, `--user_password`, allows assign user password:
+   
+        ``` commandline
+        py -m api_university.scripts --create_db -p your_user_password
+        ```
+
+
+**IMPORTANT:** **If the arguments is not specified, it is taken from the env variables or set by default.**
