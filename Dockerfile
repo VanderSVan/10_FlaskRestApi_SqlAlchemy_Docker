@@ -28,7 +28,7 @@ RUN pipenv requirements > requirements.txt && \
 
 FROM python:${PYTHON_VERSION}-${PYTHON_VERSION_SUFFIX}
 
-#create app folder
+# create app folder
 WORKDIR /usr/src/app
 
 # copy all dependencies into container
