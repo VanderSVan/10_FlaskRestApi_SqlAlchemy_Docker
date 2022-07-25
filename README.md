@@ -205,6 +205,8 @@ curl http://0.0.0.0:5000/api/v1/students/10
 <details>
 <summary>STEP 8 - Stop and remove containers:</summary>
 
+To remove
+
 **If you need:**
 - to stop the containers only:
    ```commandline
@@ -221,11 +223,11 @@ curl http://0.0.0.0:5000/api/v1/students/10
 
 1) remove images:
     ```commandline
-    docker rmi postgres 10_flaskrestapi_sqlalchemy_docker_api python:3.10-slim-buster
+    docker rmi -f flask_rest_api_api postgres
     ```
 2) remove volumes:
     ```commandline
-    docker volume rm 10_flaskrestapi_sqlalchemy_docker_myapp 10_flaskrestapi_sqlalchemy_docker_psql_db
+    docker volume rm -f flask_rest_api_myapp flask_rest_api_psql_db
     ```
 </details>
 
