@@ -1,17 +1,32 @@
 # REST-API UNIVERSITY
+
+This application is designed to manage the data of the university’s education department.
+---
 ## Project uses:
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Flask](https://img.shields.io/badge/flask--restful-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+![Flask-sqlAlchemy](https://img.shields.io/badge/flask--sqlalchemy-1E1112.svg?style=for-the-badge&logo=flask&logoColor=white)
+![Flask-migrate](https://img.shields.io/badge/flask--migrate-121910.svg?Color=green&style=for-the-badge&logo=flask&logoColor=white&)
+![Flask-marshmallow](https://img.shields.io/badge/flask--marshmallow-18171C.svg?Color=green&style=for-the-badge&logo=flask&logoColor=white&)
+![Swagger](https://img.shields.io/badge/-Swagger--flasgger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
+![Pytest](https://img.shields.io/badge/pytest-003153.svg?style=for-the-badge&logo=pytest&logoColor=gray)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Docker-compose](https://img.shields.io/badge/docker--compose-6495ED.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 
 - `Flask (flask-restful)`
 - `SqlAlchemy (flask-sqlalchemy)`
-- `PostgreSQL`
-- `Migrations (flask-migrate)`
+- `Alembic (flask-migrate)`
 - `Marshmallow (flask-marshmallow)`
 - `Swagger (flasgger)`
-- `Docker (docker-compose)`
 - `Pytest`
-
+- `PostgreSQL`
+- `Docker (docker-compose)`
+- `Nginx`
+---
 ## Task description:
-To get rest-api docs, visit [http://0.0.0.0:5000/api/v1](http://0.0.0.0:5000/api/v1)
+To get rest-api docs, visit [http://0.0.0.0:8080/api/v1/docs](http://0.0.0.0:8080/api/v1/docs)
 
 <details>
 <summary>Main stack:</summary>
@@ -87,19 +102,20 @@ Create relation MANY-TO-MANY between tables STUDENTS and COURSES.
 - Write tests using `Unittest` module or `pytest`.
 </details>
 
+---
    
 ## Installation:
 First you need to create `.env` file with environment variables at the root of the project, that contains:
 ```
-POSTGRES_DB = superuser_database_name (by default: postgres)
-POSTGRES_USER = superuser_login (by default: postgres)
-POSTGRES_PASSWORD = superuser_password (by default: postgres)
-PG_HOST = host_url (by default: localhost)
-PG_PORT = postgres_port  (by default: 5432)
-PG_DB = your_database_name (by default: university)
-PG_ROLE = your_role_name
-PG_USER = your_user_name
-PG_USER_PASSWORD = your_user_password
+POSTGRES_DB=superuser_database_name (by default: postgres)
+POSTGRES_USER=superuser_login (by default: postgres)
+POSTGRES_PASSWORD=superuser_password (by default: postgres)
+PG_HOST=host_url (by default: localhost)
+PG_PORT=postgres_port  (by default: 5432)
+PG_DB=your_database_name (by default: university)
+PG_ROLE=your_role_name (example: admins)
+PG_USER=your_user_name (example: admin)
+PG_USER_PASSWORD=your_user_password
 ```
 
 Or you can set these variables yourself.
@@ -138,7 +154,7 @@ Or you can set these variables yourself.
    ```commandline
    docker compose build
    ```
-- Or if you want to run in development mode:
+- or if you want to build development container:
    ```commandline
    docker compose -f docker-compose.dev.yml build
    ```
@@ -156,36 +172,32 @@ Or you can set these variables yourself.
    ```commandline
    docker compose up -d
    ```
+- or if you want to run in development mode:
+   ```commandline
+   docker compose -f docker-compose.dev.yml up
+   ```
 </details>
 
 <details>
 <summary>STEP 5 - Try to get data:</summary>
 
 ```commandline
-curl http://localhost/api/v1/students/10
+curl http://0.0.0.0:8080/api/v1/students/10
 ```
 Or
 ```commandline
-curl http://127.0.0.1:5000/api/v1/students/10
+curl http://0.0.0.0:8080/api/v1/students/10?full=true
 ```
 Or
 ```commandline
-curl http://0.0.0.0:5000/api/v1/students/10
+curl http://0.0.0.0:8080/api/v1/students?group=1&course=1
 ```
 </details>
 
 <details>
 <summary>STEP 6 - Get api docs in your browser:</summary>
 
- - **[http://localhost/api/v1](http://localhost/api/v1)**
-
-    Or
-
- - **[http://127.0.0.1:5000/api/v1](http://127.0.0.1:5000/api/v1)**
-
-    Or
-
- - **[http://0.0.0.0:5000/api/v1](http://0.0.0.0:5000/api/v1)**
+- **[http://0.0.0.0:8080/api/v1/docs](http://0.0.0.0:8080/api/v1/docs)**
 </details>
 
 <details>
@@ -194,11 +206,11 @@ curl http://0.0.0.0:5000/api/v1/students/10
 **If you use development mode, you can run pytest:**
 - First, enter to the container:
     ```commandline
-    docker exec -it api bash
+    docker exec -it university_api bash
     ```
 - Second, run `pytest` command:
     ```bash
-    cd tests/ && python3 -m pytest
+    cd tests/ && python -m pytest
     ```
 </details>
 
@@ -210,11 +222,18 @@ To remove
 **If you need:**
 - to stop the containers only:
    ```commandline
-    docker compose stop
-    ```
+   docker compose stop
+   ```
 - to stop and remove the containers:
    ```commandline
-    docker compose down
+   docker compose down
+   ```
+- if you have previously run a development container:
+   ```commandline
+   docker compose -f docker-compose.dev.yml stop
+   ```
+   ```commandline
+   docker compose -f docker-compose.dev.yml down
    ```
 </details>
 
@@ -223,11 +242,11 @@ To remove
 
 1) remove images:
     ```commandline
-    docker rmi -f flask_rest_api_api postgres
+    docker rmi -f flask_rest_api_api
     ```
-2) remove volumes:
+2) remove volumes (database data):
     ```commandline
-    docker volume rm -f flask_rest_api_myapp flask_rest_api_psql_db
+    docker volume rm -f flask_rest_api_psql_db
     ```
 </details>
 
@@ -321,6 +340,7 @@ http://0.0.0.0:5000/api/v1
 ```
 </details>
 
+---
 ## Migrations:
 
 <details>
@@ -366,6 +386,7 @@ http://0.0.0.0:5000/api/v1
     ```
 </details>
 
+---
 ## CLI
 **Simple command line interface, that:**
 
@@ -387,7 +408,7 @@ http://0.0.0.0:5000/api/v1
     - `-u`, `--user_name`, allows assign username:
    
         ``` commandline
-        py -m api_university.scripts --create_db -r your_user_name
+        py -m api_university.scripts --create_db -u your_user_name
         ```
     
     - `-r`, `--role_name`, allows assign role name:
@@ -401,6 +422,9 @@ http://0.0.0.0:5000/api/v1
         ``` commandline
         py -m api_university.scripts --create_db -p your_user_password
         ```
-
+4) Helper:
+    ``` commandline
+    py -m api_university.scripts -h
+    ```
 
 **IMPORTANT:** **If the arguments is not specified, it is taken from the env variables or set by default.**

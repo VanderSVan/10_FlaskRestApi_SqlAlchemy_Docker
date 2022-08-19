@@ -3,7 +3,7 @@ venv/
 # Pycharm
 .idea/
 # Pytest
-__pycache__/
+api_university/__pycache__/
 .pytest_cache/
 # Coverage packege
 htmlcov/
@@ -24,3 +24,5 @@ Dockerfile.dev
 gg.py
 .gitignore
 README.md
+tests/
+example_psql_queries_to_db.sql

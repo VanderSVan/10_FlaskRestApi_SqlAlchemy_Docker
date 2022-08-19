@@ -18,7 +18,7 @@ class Configuration:
     MIGRATION_DIR = os.path.join(api_dir, 'db', 'migrations')
     SWAGGER = {
         'doc_dir': f'{api_dir}/Swagger',
-        "specs_route": API_URL
+        "specs_route": '/api/v1/docs'
     }
     DEBUG = False
     TESTING = False

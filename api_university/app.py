@@ -2,7 +2,8 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask_restful import Api
-from flasgger import Swagger
+from flasgger import Swagger, LazyString, LazyJSONEncoder
+from werkzeug.middleware.proxy_fix import ProxyFix
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from dotenv import load_dotenv
@@ -117,3 +118,5 @@ def create_app(test_config=False, dev_config=False):
 if __name__ == '__main__':
     app = create_app(dev_config=True)
     app.run(host="0.0.0.0")
+else:
+    gunicorn_app = create_app()

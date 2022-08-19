@@ -4,13 +4,14 @@ services:
   postgresql_db:
     restart: always
     image: postgres
+    container_name: "university_db"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - psql_db:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    expose:
+      - ${PG_PORT}
     networks:
       - rest_api_university
   api:
@@ -18,16 +19,27 @@ services:
       context: .
       dockerfile: ./Dockerfile
     restart: always
-    container_name: api
+    container_name: "university_api"
     environment:
       PG_HOST: "postgresql_db"
-    command: bash -c "python3 api_university/app.py"
-    volumes:
-      - myapp:/usr/src/app
-    ports:
-      - '5000:5000'
+    command: bash -c "gunicorn -w 4 -b 0.0.0.0:5000 api_university.app:gunicorn_app"
+    expose:
+      - '5000'
     depends_on:
       - postgresql_db
+    networks:
+      - rest_api_university
+  nginx:
+    image: nginx:1.23.1-alpine
+    restart: always
+    container_name: "university_nginx"
+    depends_on:
+      - api
+      - postgresql_db
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '8080:80'
     networks:
       - rest_api_university
 
@@ -37,4 +49,3 @@ networks:
 
 volumes:
   psql_db:
-  myapp:
